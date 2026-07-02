@@ -8,6 +8,13 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML_FILES = [ROOT / "index.html", *sorted((ROOT / "dashboards").glob("*.html"))]
+PUBLIC_SITE_BASE = "https://lukestambaugh75-hue.github.io/daily-dashboards-public-safe-r0"
+PUBLIC_HTML_URLS = [
+    f"{PUBLIC_SITE_BASE}/",
+    f"{PUBLIC_SITE_BASE}/dashboards/washer.html",
+    f"{PUBLIC_SITE_BASE}/dashboards/ford.html",
+    f"{PUBLIC_SITE_BASE}/dashboards/baby.html",
+]
 FORBIDDEN = [
     "/Users/",
     "77040",
@@ -55,11 +62,14 @@ def check_local_link(source, href):
         raise AssertionError(f"{source.relative_to(ROOT)} broken local link: {href}")
 
 
-def check_live_url(url):
+def check_live_url(url, expect_html=False):
     req = Request(url, headers={"User-Agent": "codex-public-dashboard-link-check/1.0"})
     with urlopen(req, timeout=20) as response:
         if response.status >= 400:
             raise AssertionError(f"{url} returned HTTP {response.status}")
+        content_type = response.headers.get("content-type", "")
+        if expect_html and "text/html" not in content_type.lower():
+            raise AssertionError(f"{url} returned non-HTML content type: {content_type}")
 
 
 def main():
@@ -74,7 +84,9 @@ def main():
                 live_urls.add(href)
     for url in sorted(live_urls):
         check_live_url(url)
-    print(f"verified {len(HTML_FILES)} html files and {len(live_urls)} live urls")
+    for url in PUBLIC_HTML_URLS:
+        check_live_url(url, expect_html=True)
+    print(f"verified {len(HTML_FILES)} html files, {len(live_urls)} external urls, and {len(PUBLIC_HTML_URLS)} public html urls")
 
 
 if __name__ == "__main__":
