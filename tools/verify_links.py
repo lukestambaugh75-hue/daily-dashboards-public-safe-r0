@@ -8,9 +8,9 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML_FILES = [ROOT / "index.html", *sorted((ROOT / "dashboards").glob("*.html"))]
-PUBLIC_SITE_BASE = "https://lukestambaugh75-hue.github.io/daily-dashboards-public-safe-r0"
+PUBLIC_SITE_BASE = "https://htmlpreview.github.io/?https://github.com/lukestambaugh75-hue/daily-dashboards-public-safe-r0/blob/main"
 PUBLIC_HTML_URLS = [
-    f"{PUBLIC_SITE_BASE}/",
+    f"{PUBLIC_SITE_BASE}/index.html",
     f"{PUBLIC_SITE_BASE}/dashboards/washer.html",
     f"{PUBLIC_SITE_BASE}/dashboards/ford.html",
     f"{PUBLIC_SITE_BASE}/dashboards/baby.html",

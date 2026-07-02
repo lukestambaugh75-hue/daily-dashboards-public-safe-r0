@@ -4,7 +4,7 @@ Public-safe dashboard hub for shareable daily tracker views.
 
 Live site:
 
-https://lukestambaugh75-hue.github.io/daily-dashboards-public-safe-r0/
+https://htmlpreview.github.io/?https://github.com/lukestambaugh75-hue/daily-dashboards-public-safe-r0/blob/main/index.html
 
 ## Safety Boundary
 
