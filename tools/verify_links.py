@@ -27,11 +27,11 @@ FORBIDDEN = [
 ]
 REQUIRED_BY_FILE = {
     "index.html": [
-        "Top 3 Quality + Price",
+        "Top 3 Quality and Price",
         "Open deep dashboard",
-        "Raptor lowest qualifying lead",
-        "Outdoor-rated keg value",
-        "PS5 + TV value stack",
+        "Raptor value lead",
+        "Outdoor keg value",
+        "PS5 and TV stack",
     ],
 }
 
