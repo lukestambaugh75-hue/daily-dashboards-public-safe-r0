@@ -25,6 +25,15 @@ FORBIDDEN = [
     "Active Directory R3",
     "out/dashboard.html",
 ]
+REQUIRED_BY_FILE = {
+    "index.html": [
+        "Top 3 Quality + Price",
+        "Open deep dashboard",
+        "Raptor lowest qualifying lead",
+        "Outdoor-rated keg value",
+        "PS5 + TV value stack",
+    ],
+}
 
 
 class LinkParser(HTMLParser):
@@ -47,6 +56,10 @@ def assert_no_forbidden_text(path):
     for needle in FORBIDDEN:
         if needle.lower() in lowered:
             raise AssertionError(f"{path.relative_to(ROOT)} contains forbidden public text: {needle}")
+    required = REQUIRED_BY_FILE.get(str(path.relative_to(ROOT)), [])
+    missing = [needle for needle in required if needle.lower() not in lowered]
+    if missing:
+        raise AssertionError(f"{path.relative_to(ROOT)} missing required public text: {missing}")
 
 
 def check_local_link(source, href):
