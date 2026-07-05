@@ -32,7 +32,15 @@ REQUIRED_BY_FILE = {
         "Raptor value lead",
         "Outdoor keg value",
         "PS5 and TV stack",
+        "Color index",
+        "Green",
+        "Blue",
+        "Amber",
+        "Red",
     ],
+    "dashboards/washer.html": ["Color index", "Green", "Blue", "Amber", "Red"],
+    "dashboards/ford.html": ["Color index", "Green", "Blue", "Amber", "Red"],
+    "dashboards/baby.html": ["Color index", "Green", "Blue", "Amber", "Red"],
 }
 
 

@@ -389,6 +389,15 @@ h1 {
   background: var(--panel-2);
 }
 
+.color-index {
+  margin-top: 18px;
+  border-left-color: var(--blue);
+}
+
+.color-index p {
+  margin-bottom: 0;
+}
+
 .footer {
   padding: 28px 0 42px;
   color: var(--muted);
