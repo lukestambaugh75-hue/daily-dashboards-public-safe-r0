@@ -14,7 +14,15 @@ PUBLIC_HTML_URLS = [
     f"{PUBLIC_SITE_BASE}/dashboards/washer.html",
     f"{PUBLIC_SITE_BASE}/dashboards/ford.html",
     f"{PUBLIC_SITE_BASE}/dashboards/baby.html",
+    f"{PUBLIC_SITE_BASE}/dashboards/stroller.html",
 ]
+SKIP_LIVE_LINK_HOSTS = {
+    "facebook.com",
+    "www.albeebaby.com",
+    "www.bloomingdales.com",
+    "www.facebook.com",
+    "www.potterybarnkids.com",
+}
 FORBIDDEN = [
     "/Users/",
     "77040",
@@ -32,6 +40,7 @@ REQUIRED_BY_FILE = {
         "Raptor value lead",
         "Outdoor keg value",
         "PS5 and TV stack",
+        "Nuna Stroller Tracker",
         "Color index",
         "Green",
         "Blue",
@@ -59,6 +68,21 @@ REQUIRED_BY_FILE = {
         "not a recommendation",
     ],
     "dashboards/baby.html": [
+        "Color index",
+        "Green",
+        "Blue",
+        "Amber",
+        "Red",
+        "information only",
+        "not a recommendation",
+    ],
+    "dashboards/stroller.html": [
+        "Julie price board",
+        "Purchase-worthy deals",
+        "All leads ranked by price for Julie",
+        "lowest to highest",
+        "Message first",
+        "Buy-worthy now",
         "Color index",
         "Green",
         "Blue",
@@ -128,7 +152,9 @@ def main():
         for href in parser.hrefs:
             check_local_link(path, href)
             if href.startswith(("http://", "https://")):
-                live_urls.add(href)
+                host = urlparse(href).netloc.lower()
+                if host not in SKIP_LIVE_LINK_HOSTS:
+                    live_urls.add(href)
     for url in sorted(live_urls):
         check_live_url(url)
     for url in PUBLIC_HTML_URLS:

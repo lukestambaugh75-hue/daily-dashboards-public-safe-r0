@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nuna Stroller Price Tracker - Public Safe</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .stroller-hero {
+      min-height: 58vh;
+      background:
+        linear-gradient(140deg, rgba(134, 217, 119, .24), rgba(103, 174, 251, .12) 46%, rgba(244, 184, 96, .17)),
+        linear-gradient(180deg, rgba(16, 18, 20, .12), var(--bg));
+    }
+    .decision-strip, .deal-grid, .search-grid { display: grid; gap: 12px; }
+    .decision-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 24px; }
+    .decision-metric, .deal-card, .search-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+      overflow-wrap: anywhere;
+    }
+    .decision-metric strong { display: block; margin: 6px 0; font-size: clamp(1.55rem, 4vw, 2.35rem); line-height: 1; }
+    .decision-metric.ready { border-color: rgba(134, 217, 119, .62); background: rgba(35, 63, 42, .86); }
+    .decision-metric.caution { border-color: rgba(244, 184, 96, .65); background: rgba(65, 49, 21, .86); }
+    .deal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .deal-card.ready { border-color: rgba(134, 217, 119, .72); }
+    .deal-card.verify, tr.verify { border-color: rgba(244, 184, 96, .72); }
+    .deal-card.watch, tr.watch { border-color: rgba(103, 174, 251, .68); }
+    .deal-card.stop, tr.stop { border-color: rgba(239, 111, 108, .72); }
+    .deal-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .deal-top strong { font-size: 1.8rem; }
+    .source-line, .next-step, .table small { color: var(--muted); }
+    .next-step { font-size: .94rem; }
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      width: fit-content;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .05);
+      font-size: .78rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .flag-row { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
+    .flag-row span {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .price-table { width: 100%; min-width: 1120px; border-collapse: collapse; }
+    .price-table th, .price-table td { padding: 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .price-table th { color: var(--green); font-size: .78rem; text-transform: uppercase; }
+    .price-table small { display: block; margin-top: 3px; max-width: 240px; }
+    .source-link { white-space: normal; min-width: 130px; justify-content: center; }
+    .search-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .search-card span { color: var(--blue); font-size: .78rem; font-weight: 800; text-transform: uppercase; }
+    .rule-list { margin: 0; padding-left: 20px; color: var(--muted); }
+    .rule-list li { margin: 10px 0; }
+    @media (max-width: 980px) {
+      .decision-strip, .deal-grid, .search-grid { grid-template-columns: 1fr; }
+      .stroller-hero { min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero stroller-hero">
+    <div class="wrap">
+      <p class="eyebrow">Julie price board</p>
+      <h1>Nuna TRVL lx + PIPA urbn, sorted lowest to highest.</h1>
+      <p class="lead">Sort by lowest verified price first. Granite is preferred, but a meaningfully lower price in another color beats color. Last researched 2026-07-09; rendered July 8, 2026 at 10:36 PM CDT.</p>
+      <div class="top-actions">
+        <a class="button primary" href="../index.html">Back to hub</a>
+        <a class="button" href="#purchase-worthy">Purchase-worthy deals</a>
+        <a class="button" href="#price-ladder">Lowest-to-highest prices</a>
+      </div>
+      <div class="callout color-index">
+        <strong>Color index.</strong>
+        <p><strong>Green</strong> = recommended or ready to act. <strong>Blue</strong> = information only, like links, charts, totals, or neutral controls; it is not a recommendation. <strong>Amber</strong> = caution; check details before acting. <strong>Red</strong> = blocked or stop; do not act until fixed.</p>
+      </div>
+      <div class="decision-strip">
+          <article class="decision-metric caution">
+            <span>Lowest raw price</span>
+            <strong>$150</strong>
+            <small>Facebook Marketplace / Do not buy seat</small>
+          </article>
+          <article class="decision-metric ready">
+            <span>Lowest purchase-worthy lead</span>
+            <strong>$250</strong>
+            <small>Facebook Marketplace / Message first</small>
+          </article>
+          <article class="decision-metric ready">
+            <span>Safe buy today</span>
+            <strong>$800</strong>
+            <small>Bambi Baby / Granite</small>
+          </article>
+          <article class="decision-metric info">
+            <span>Sources checked</span>
+            <strong>16</strong>
+            <small>6 leads at or below $700</small>
+          </article></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="purchase-worthy">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Purchase-worthy</p>
+            <h2>Deals worth acting on or messaging first</h2>
+          </div>
+          <p>Green can be bought safely. Amber Marketplace leads are price-worthy, but the car seat is not safe to use unless the seller passes the safety checklist.</p>
+        </div>
+        <div class="deal-grid">
+        <article class="deal-card verify">
+          <div class="deal-top">
+            <span class="status-chip">Message first</span>
+            <strong>$250</strong>
+          </div>
+          <h3>Nuna TRVL LX + PIPA urbn Travel System</h3>
+          <p class="source-line">Facebook Marketplace / Unknown / Used or unspecified</p>
+          <p>Worth messaging because it is an exact-system lead at $550 below MSRP, but the car seat cannot be used unless safety proof passes.</p>
+          <p class="next-step"><strong>Next step:</strong> Ask for manufacture-date label, model label, expiration, recall check, crash history, original inserts, manual, and detailed photos before any purchase.</p>
+          <div class="flag-row"><span>exact system</span> <span>very low price</span> <span>message first</span> <span>car seat history unknown</span></div>
+          <a class="button source-link" href="https://www.facebook.com/marketplace/item/1521455836294786/">Open Marketplace lead</a>
+        </article>
+
+        <article class="deal-card verify">
+          <div class="deal-top">
+            <span class="status-chip">Message first</span>
+            <strong>$300</strong>
+          </div>
+          <h3>Nuna TRVL LX + PIPA urbn Baseless Infant Car Seat Travel System</h3>
+          <p class="source-line">Facebook Marketplace / Unknown / In Stock; condition unclear</p>
+          <p>Potentially strong if it is a real sealed/open-box seller. Verify whether $300 is for the full bundle or per component.</p>
+          <p class="next-step"><strong>Next step:</strong> Confirm total bundle price, seller type, sealed status, receipt, return option, and car-seat safety proof before meeting or paying.</p>
+          <div class="flag-row"><span>exact system</span> <span>fresh listing</span> <span>possible price ambiguity</span> <span>message first</span></div>
+          <a class="button source-link" href="https://www.facebook.com/marketplace/item/1424784046331419/">Open Marketplace lead</a>
+        </article>
+
+        <article class="deal-card verify">
+          <div class="deal-top">
+            <span class="status-chip">Message first</span>
+            <strong>$500</strong>
+          </div>
+          <h3>Nuna PIPA urbn TRVL Stroller &amp; Car Seat Travel System</h3>
+          <p class="source-line">Facebook Marketplace / Unknown / Used - like new</p>
+          <p>Worth messaging only if the cheaper $250 and $300 leads fail; $500 is still $300 below new retail.</p>
+          <p class="next-step"><strong>Next step:</strong> Ask for complete safety checklist, photos, and whether the car seat was ever used in a vehicle.</p>
+          <div class="flag-row"><span>below retail</span> <span>message first</span> <span>car seat history unknown</span></div>
+          <a class="button source-link" href="https://www.facebook.com/marketplace/item/1536273491343229/">Open Marketplace lead</a>
+        </article>
+
+        <article class="deal-card watch">
+          <div class="deal-top">
+            <span class="status-chip">Restock alert</span>
+            <strong>$664.99</strong>
+          </div>
+          <h3>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Cedar</h3>
+          <p class="source-line">GoodBuy Gear / Cedar / Barely Used</p>
+          <p>Best certified-resale target price if it comes back in stock; color is Cedar, but price beats Granite preference.</p>
+          <p class="next-step"><strong>Next step:</strong> Set restock alert and buy only if the listing is actually available at or near this price.</p>
+          <div class="flag-row"><span>certified resale</span> <span>under 700</span> <span>out of stock</span> <span>price over color</span></div>
+          <a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-cedar">Open resale listing</a>
+        </article>
+
+        <article class="deal-card watch">
+          <div class="deal-top">
+            <span class="status-chip">Restock alert</span>
+            <strong>$680.99</strong>
+          </div>
+          <h3>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Caviar</h3>
+          <p class="source-line">GoodBuy Gear / Caviar / Open Box</p>
+          <p>Excellent certified open-box buy if restocked under $700; not Granite, but price wins.</p>
+          <p class="next-step"><strong>Next step:</strong> Set restock alert and buy only when available.</p>
+          <div class="flag-row"><span>certified resale</span> <span>under 700</span> <span>out of stock</span> <span>price over color</span></div>
+          <a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-caviar">Open resale listing</a>
+        </article>
+
+        <article class="deal-card watch">
+          <div class="deal-top">
+            <span class="status-chip">Restock alert</span>
+            <strong>$765.99</strong>
+          </div>
+          <h3>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Curated</h3>
+          <p class="source-line">GoodBuy Gear / Curated / Open Box</p>
+          <p>Worth watching, but the $665 and $681 GoodBuy Gear targets are better if they return.</p>
+          <p class="next-step"><strong>Next step:</strong> Do not chase unless lower-price GoodBuy Gear listings stay unavailable and this comes back in stock.</p>
+          <div class="flag-row"><span>certified resale</span> <span>near stretch price</span> <span>out of stock</span></div>
+          <a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-curated">Open resale listing</a>
+        </article>
+
+        <article class="deal-card ready">
+          <div class="deal-top">
+            <span class="status-chip">Buy-worthy now</span>
+            <strong>$800</strong>
+          </div>
+          <h3>Nuna TRVL LX + PIPA urbn Travel System</h3>
+          <p class="source-line">Bambi Baby / Granite / New</p>
+          <p>Safest Granite buy today. It is not discounted, but it is exact, new, authorized, and has the preferred color.</p>
+          <p class="next-step"><strong>Next step:</strong> Use as the fallback buy-now option if Marketplace verification fails and waiting for a restock is not worth it.</p>
+          <div class="flag-row"><span>granite</span> <span>new</span> <span>authorized retailer</span> <span>safe buy now</span></div>
+          <a class="button source-link" href="https://www.bambibaby.com/products/nuna-trvl-lx-pipa-urbn-travel-system">Open retailer</a>
+        </article></div>
+      </div>
+    </section>
+
+    <section class="section" id="price-ladder">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Lowest to highest</p>
+            <h2>All leads ranked by price for Julie</h2>
+          </div>
+          <p>Price is the primary sort. Safety/action status explains whether the price is actually usable.</p>
+        </div>
+        <div class="table-wrap">
+          <table class="price-table">
+            <thead>
+              <tr><th>Rank</th><th>Price</th><th>Source</th><th>Listing</th><th>Color</th><th>Availability</th><th>Action</th><th>Julie read</th><th>Link</th></tr>
+            </thead>
+            <tbody>
+            <tr class="stop">
+              <td>1</td>
+              <td><strong>$150</strong><small>$650 below $800</small></td>
+              <td>Facebook Marketplace<small>Philadelphia, PA</small></td>
+              <td>Nuna TRVL + PIPA urbn car seat<small>close_match</small></td>
+              <td>Unknown</td>
+              <td>Listed<small>Used</small></td>
+              <td><span class="status-chip">Do not buy seat</span><small>used_car_seat_unknown</small></td>
+              <td>Lowest raw price, but too little safety evidence. Do not buy the car seat from this listing without full proof.</td>
+              <td><a class="button source-link" href="https://www.facebook.com/marketplace/item/2150581985740565/">Open Marketplace lead</a></td>
+            </tr>
+
+            <tr class="verify">
+              <td>2</td>
+              <td><strong>$250</strong><small>$550 below $800</small></td>
+              <td>Facebook Marketplace<small>Greenville, NC</small></td>
+              <td>Nuna TRVL LX + PIPA urbn Travel System<small>exact_system</small></td>
+              <td>Unknown</td>
+              <td>Listed<small>Used or unspecified</small></td>
+              <td><span class="status-chip">Message first</span><small>used_car_seat_unknown</small></td>
+              <td>Worth messaging because it is an exact-system lead at $550 below MSRP, but the car seat cannot be used unless safety proof passes.</td>
+              <td><a class="button source-link" href="https://www.facebook.com/marketplace/item/1521455836294786/">Open Marketplace lead</a></td>
+            </tr>
+
+            <tr class="verify">
+              <td>3</td>
+              <td><strong>$300</strong><small>$500 below $800</small></td>
+              <td>Facebook Marketplace<small>Unknown</small></td>
+              <td>Nuna TRVL LX + PIPA urbn Baseless Infant Car Seat Travel System<small>exact_system</small></td>
+              <td>Unknown</td>
+              <td>Listed 3 hours before search snippet<small>In Stock; condition unclear</small></td>
+              <td><span class="status-chip">Message first</span><small>used_or_retailer_unknown</small></td>
+              <td>Potentially strong if it is a real sealed/open-box seller. Verify whether $300 is for the full bundle or per component.</td>
+              <td><a class="button source-link" href="https://www.facebook.com/marketplace/item/1424784046331419/">Open Marketplace lead</a></td>
+            </tr>
+
+            <tr class="verify">
+              <td>4</td>
+              <td><strong>$500</strong><small>$300 below $800</small></td>
+              <td>Facebook Marketplace<small>Minneapolis, MN</small></td>
+              <td>Nuna PIPA urbn TRVL Stroller &amp; Car Seat Travel System<small>exact_or_near_exact_system</small></td>
+              <td>Unknown</td>
+              <td>Listed<small>Used - like new</small></td>
+              <td><span class="status-chip">Message first</span><small>used_car_seat_unknown</small></td>
+              <td>Worth messaging only if the cheaper $250 and $300 leads fail; $500 is still $300 below new retail.</td>
+              <td><a class="button source-link" href="https://www.facebook.com/marketplace/item/1536273491343229/">Open Marketplace lead</a></td>
+            </tr>
+
+            <tr class="watch">
+              <td>5</td>
+              <td><strong>$664.99</strong><small>$135.01 below $800</small></td>
+              <td>GoodBuy Gear<small>Nationwide shipping</small></td>
+              <td>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Cedar<small>exact_system</small></td>
+              <td>Cedar</td>
+              <td>Out of stock<small>Barely Used</small></td>
+              <td><span class="status-chip">Restock alert</span><small>certified_resale_but_unavailable</small></td>
+              <td>Best certified-resale target price if it comes back in stock; color is Cedar, but price beats Granite preference.</td>
+              <td><a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-cedar">Open resale listing</a></td>
+            </tr>
+
+            <tr class="watch">
+              <td>6</td>
+              <td><strong>$680.99</strong><small>$119.01 below $800</small></td>
+              <td>GoodBuy Gear<small>Nationwide shipping</small></td>
+              <td>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Caviar<small>exact_system</small></td>
+              <td>Caviar</td>
+              <td>Out of stock<small>Open Box</small></td>
+              <td><span class="status-chip">Restock alert</span><small>certified_resale_but_unavailable</small></td>
+              <td>Excellent certified open-box buy if restocked under $700; not Granite, but price wins.</td>
+              <td><a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-caviar">Open resale listing</a></td>
+            </tr>
+
+            <tr class="caution">
+              <td>7</td>
+              <td><strong>$750</strong><small>$50 below $800</small></td>
+              <td>Facebook Marketplace<small>Unknown</small></td>
+              <td>Nuna Trvl LX + Nuna Pipa Urbn Travel System (Color: Cedar)<small>exact_system</small></td>
+              <td>Cedar</td>
+              <td>Listed<small>Used or unspecified</small></td>
+              <td><span class="status-chip">Backup only</span><small>used_car_seat_unknown</small></td>
+              <td>Too close to new retail for unknown car-seat history. Better to buy new or wait for certified resale.</td>
+              <td><a class="button source-link" href="https://www.facebook.com/marketplace/item/1319917865874946/">Open Marketplace lead</a></td>
+            </tr>
+
+            <tr class="watch">
+              <td>8</td>
+              <td><strong>$765.99</strong><small>$34.01 below $800</small></td>
+              <td>GoodBuy Gear<small>Nationwide shipping</small></td>
+              <td>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Curated<small>exact_system</small></td>
+              <td>Curated</td>
+              <td>Out of stock<small>Open Box</small></td>
+              <td><span class="status-chip">Restock alert</span><small>certified_resale_but_unavailable</small></td>
+              <td>Worth watching, but the $665 and $681 GoodBuy Gear targets are better if they return.</td>
+              <td><a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-curated">Open resale listing</a></td>
+            </tr>
+
+            <tr class="info">
+              <td>9</td>
+              <td><strong>$800</strong><small>same as $800 retail</small></td>
+              <td>Albee Baby<small>Online retail</small></td>
+              <td>Nuna TRVL LX + PIPA urbn Baseless Infant Car Seat Travel System - Cedar<small>exact_system</small></td>
+              <td>Cedar</td>
+              <td>Backorder; ships by mid August<small>New</small></td>
+              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
+              <td>Rewards are useful only if you will spend at Albee later. Backorder makes it weaker than Bambi/Dillard&#x27;s.</td>
+              <td><a class="button source-link" href="https://www.albeebaby.com/products/nuna-trvl-lx-pipa-urbn-travel-system-cedar-1">Open retailer</a></td>
+            </tr>
+
+            <tr class="ready">
+              <td>10</td>
+              <td><strong>$800</strong><small>same as $800 retail</small></td>
+              <td>Bambi Baby<small>Online retail</small></td>
+              <td>Nuna TRVL LX + PIPA urbn Travel System<small>exact_system</small></td>
+              <td>Granite</td>
+              <td>In stock when checked<small>New</small></td>
+              <td><span class="status-chip">Buy-worthy now</span><small>new_authorized_retailer</small></td>
+              <td>Safest Granite buy today. It is not discounted, but it is exact, new, authorized, and has the preferred color.</td>
+              <td><a class="button source-link" href="https://www.bambibaby.com/products/nuna-trvl-lx-pipa-urbn-travel-system">Open retailer</a></td>
+            </tr>
+
+            <tr class="info">
+              <td>11</td>
+              <td><strong>$800</strong><small>same as $800 retail</small></td>
+              <td>Bloomingdale&#x27;s<small>Online retail</small></td>
+              <td>Nuna TRVL LX Stroller &amp; PIPA Urbn Infant Car Seat Travel System<small>exact_system</small></td>
+              <td>Caviar / Chocolate; Granite and Cedar shown as color options</td>
+              <td>Add to Bag / Buy Now shown when checked<small>New</small></td>
+              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
+              <td>Good backup retailer, but no price advantage over Bambi Baby for Granite.</td>
+              <td><a class="button source-link" href="https://www.bloomingdales.com/shop/product/nuna-trvl-lx-stroller-pipa-urbn-infant-car-seat-travel-system?ID=5596828">Open retailer</a></td>
+            </tr>
+
+            <tr class="info">
+              <td>12</td>
+              <td><strong>$800</strong><small>same as $800 retail</small></td>
+              <td>Dillard&#x27;s<small>Online retail</small></td>
+              <td>Nuna TRVL lx + PIPA urbn Infant Car Seat Travel System<small>exact_system</small></td>
+              <td>Cedar or Granite</td>
+              <td>Add to Bag shown in search result<small>New</small></td>
+              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
+              <td>Exact Granite source and original Luke link. Good backup, but check final price and return terms before buying.</td>
+              <td><a class="button source-link" href="https://www.dillards.com/p/nuna-trvl-lx--pipa-urbn-infant-car-seat-travel-system/520358777">Open retailer</a></td>
+            </tr>
+
+            <tr class="stop">
+              <td>13</td>
+              <td><strong>$800</strong><small>same as $800 retail</small></td>
+              <td>Facebook Marketplace<small>Unknown</small></td>
+              <td>NUNA trvl lx + pipa urbn Travel System (Caviar)<small>exact_system</small></td>
+              <td>Caviar</td>
+              <td>Listed<small>Used or unspecified</small></td>
+              <td><span class="status-chip">Do not buy seat</span><small>used_car_seat_unknown</small></td>
+              <td>No reason to take used-car-seat risk at the same price as new retail.</td>
+              <td><a class="button source-link" href="https://www.facebook.com/marketplace/item/26382876711375411/">Open Marketplace lead</a></td>
+            </tr>
+
+            <tr class="info">
+              <td>14</td>
+              <td><strong>$800</strong><small>same as $800 retail</small></td>
+              <td>Kidsland<small>Online retail</small></td>
+              <td>Nuna TRVL lx + PIPA URBN Travel System<small>exact_system</small></td>
+              <td>Cedar, Granite, or Caviar / Chocolate shown unavailable</td>
+              <td>Pre-order; color variants unavailable when indexed<small>New</small></td>
+              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
+              <td>Not a price deal and likely slower than in-stock sources.</td>
+              <td><a class="button source-link" href="https://www.kidslandusa.com/products/nuna-trvl-lx-pipa-urbn-travel-system">Open retailer</a></td>
+            </tr>
+
+            <tr class="info">
+              <td>15</td>
+              <td><strong>$800</strong><small>same as $800 retail</small></td>
+              <td>Pottery Barn Kids<small>Online retail</small></td>
+              <td>Nuna TRVL LX + PIPA urbn Infant Travel System<small>exact_system</small></td>
+              <td>Unknown</td>
+              <td>Retail page<small>New</small></td>
+              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
+              <td>Same retail price; useful backup and registry/rewards option, not a deal.</td>
+              <td><a class="button source-link" href="https://www.potterybarnkids.com/products/nuna-trvl-lx-pipa-urbn-travel-system/">Open retailer</a></td>
+            </tr>
+
+            <tr class="stop">
+              <td>16</td>
+              <td><strong>verify</strong><small>item page snippet did not expose price</small></td>
+              <td>Facebook Marketplace<small>Dover, FL</small></td>
+              <td>nuna trvl pipa urbn car seat<small>close_match</small></td>
+              <td>Unknown</td>
+              <td>Listed<small>Used; small stain shown</small></td>
+              <td><span class="status-chip">Do not buy seat</span><small>used_car_seat_unknown</small></td>
+              <td>Not a buy recommendation because condition notes already show wear and the car-seat safety history is not visible.</td>
+              <td><a class="button source-link" href="https://www.facebook.com/marketplace/item/1698087788220621/">Open Marketplace lead</a></td>
+            </tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="grid two">
+          <article class="panel chart">
+            <h2>How to use the board</h2>
+            <table class="table">
+              <tbody>
+                <tr><td>Lowest raw price</td><td>Good for search visibility only; not automatically safe.</td></tr>
+                <tr><td>Message first</td><td>Ask for proof before any payment or meetup.</td></tr>
+                <tr><td>Restock alert</td><td>Certified resale price is attractive, but not available now.</td></tr>
+                <tr><td>Safe buy today</td><td>New/authorized retailer, exact bundle, preferred Granite if available.</td></tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="panel chart">
+            <h2>Safety rules</h2>
+            <ul class="rule-list"><li><strong>used-car-seat-history:</strong> Do not treat a used infant car seat as safe unless crash history, manufacture label, model, recall status, expiration, and all original parts are verified.</li>
+<li><strong>marketplace-default:</strong> Marketplace bundles can be price-worthy leads, but the car seat remains verify-first unless the seller can prove it is unused/open-box or fully passes the safety checklist.</li>
+<li><strong>price-over-color:</strong> Price outranks color. Granite receives a preference note only when safety and price are close.</li></ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Search coverage</p>
+            <h2>What was searched</h2>
+          </div>
+          <p>Marketplace snippets are treated as leads, not final verified listings, because Facebook can hide details until opened in a signed-in browser.</p>
+        </div>
+        <div class="search-grid">
+        <article class="search-card">
+          <span>online_new</span>
+          <h3>Nuna TRVL lx PIPA urbn travel system Granite price</h3>
+          <p>New retail listings remain clustered around $800, with Bambi Baby, Bloomingdale&#x27;s, Pottery Barn Kids, Albee Baby, Dillard&#x27;s, Babylist, and Kidsland showing exact or near-exact product pages.</p>
+          <small>Checked 2026-07-09</small>
+        </article>
+
+        <article class="search-card">
+          <span>certified_resale</span>
+          <h3>site:goodbuygear.com Nuna TRVL LX PIPA Urbn Infant Travel System</h3>
+          <p>GoodBuy Gear showed several exact open-box or barely-used listings between $664.99 and $765.99, but the checked listings were out of stock.</p>
+          <small>Checked 2026-07-09</small>
+        </article>
+
+        <article class="search-card">
+          <span>facebook_marketplace</span>
+          <h3>site:facebook.com/marketplace/item Nuna TRVL LX PIPA urbn</h3>
+          <p>Facebook Marketplace search snippets surfaced exact or close bundles from $150 to $800. These are useful leads, but not safe car-seat buys until individually verified.</p>
+          <small>Checked 2026-07-09</small>
+        </article></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">Public-safe stroller tracker. Confirm final price, taxes, shipping, stock, seller identity, car-seat labels, crash history, expiration, recalls, and included parts before buying.</div>
+  </footer>
+</body>
+</html>
