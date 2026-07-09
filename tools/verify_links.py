@@ -79,6 +79,8 @@ REQUIRED_BY_FILE = {
     "dashboards/stroller.html": [
         "Julie price board",
         "Purchase-worthy deals",
+        "Certified resale watchlist",
+        "Good prices, not purchase-ready",
         "All leads ranked by price for Julie",
         "lowest to highest",
         "Message first",
