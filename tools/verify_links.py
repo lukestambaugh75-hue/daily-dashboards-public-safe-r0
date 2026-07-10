@@ -6,6 +6,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
+from canonical_checkout import assert_canonical_checkout
+
 ROOT = Path(__file__).resolve().parents[1]
 HTML_FILES = [ROOT / "index.html", *sorted((ROOT / "dashboards").glob("*.html"))]
 PUBLIC_SITE_BASE = "https://lukestambaugh75-hue.github.io/daily-dashboards-public-safe-r0"
@@ -146,6 +148,7 @@ def check_live_url(url, expect_html=False):
 
 
 def main():
+    assert_canonical_checkout(ROOT)
     live_urls = set()
     for path in HTML_FILES:
         assert_no_forbidden_text(path)

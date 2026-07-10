@@ -39,6 +39,16 @@ open the granular live dashboards for Raptor, kegerators, and PS5 + TV.
 
 ## Verify
 
+Run verification only from the canonical checkout at
+`/Users/lukestambaugh/Documents/Files for GitHub/Public Safe Daily Dashboards r0`.
+The verifier rejects any other path, a non-`main` branch, or the wrong GitHub
+origin before checking dashboard content and links. Publishing scripts can use
+`tools/canonical_checkout.py` with the stricter clean-tree and upstream-sync
+options before writing.
+
+The similarly named lowercase checkout is not a publishing target. Do not edit,
+move, or delete it as part of dashboard refresh work.
+
 ```bash
 /usr/bin/python3 tools/verify_links.py
 ```
