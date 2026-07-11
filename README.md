@@ -6,9 +6,20 @@ Live site:
 
 https://lukestambaugh75-hue.github.io/daily-dashboards-public-safe-r0/
 
-HTML preview fallback:
+There is no htmlpreview.github.io fallback any more, and there should not be one. That
+proxy was a workaround from when this repo had no working Pages site. It does now, and
+serves every page directly; routing through a third-party renderer only added a slower,
+uglier URL that could break independently.
 
-https://htmlpreview.github.io/?https://github.com/lukestambaugh75-hue/daily-dashboards-public-safe-r0/blob/main/index.html
+## Publishing
+
+The pages under `dashboards/` and `index.html` are **generated**, not hand-written:
+
+    python3 tools/publish_dashboards.py            # regenerate from live tracker data
+    python3 tools/publish_dashboards.py --check    # fail if the committed pages are stale
+
+Editing them by hand will be overwritten on the next run. They used to be hand-authored by
+an agent on each run, which is why they drifted and stayed thin.
 
 ## Safety Boundary
 
