@@ -22,6 +22,7 @@ which renders SVG; a mail client does not. The email path uses PNGs instead.
 import argparse
 import csv
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -51,6 +52,30 @@ def read_json(path):
         return json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
+
+
+def identity_attrs(private_index):
+    """Carry the tracker's deployment-identity attributes onto the public page.
+
+    The private dashboard stamps its <body> with data-snapshot-id / data-refresh-at /
+    data-row-count / data-published-at, and the tracker's check_public_pages.py compares
+    those against the live page to prove it is not serving stale data. That freshness
+    guarantee is worth keeping now that the public page is the only one published, so we
+    copy the attributes across verbatim rather than reimplementing the hashing here.
+    """
+    try:
+        # Read the whole file: the tracker inlines its CSS, so <body> can sit well past
+        # any fixed-size prefix (it is ~13 KB into Ford's 300 KB dashboard).
+        head = Path(private_index).read_text(encoding="utf-8")
+    except OSError:
+        return ""
+    m = re.search(r"<body([^>]*)>", head)
+    if not m:
+        return ""
+    keep = re.findall(
+        r'(data-(?:snapshot-id|refresh-at|row-count|published-at)="[^"]*")', m.group(1)
+    )
+    return (" " + " ".join(keep)) if keep else ""
 
 
 def read_csv(path, tail=None):
@@ -109,7 +134,7 @@ def bar(label, value_text, pct, tone=""):
             f'<div class="bar-value">{value_text}</div></div>')
 
 
-def page(title, eyebrow, headline, lead, sections, footer):
+def page(title, eyebrow, headline, lead, sections, footer, body_attrs=""):
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -118,7 +143,7 @@ def page(title, eyebrow, headline, lead, sections, footer):
   <title>{title}</title>
   <link rel="stylesheet" href="../styles.css">
 </head>
-<body>
+<body{body_attrs}>
   <header class="hero">
     <div class="wrap">
       <p class="eyebrow">{eyebrow}</p>
@@ -230,6 +255,7 @@ def build_ford():
         "".join(secs),
         "Sanitized summary only. The private tracker keeps full source rows, raw listing "
         "links, and loan assumptions out of this public page.",
+        body_attrs=identity_attrs(FORD / "index.html"),
     )
     return html, {
         "price": money(s["cheapest_price"]),
