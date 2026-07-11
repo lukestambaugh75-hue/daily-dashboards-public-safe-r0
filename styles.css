@@ -465,6 +465,7 @@ h1 {
 
   .pick-card .button {
     margin: 8px 16px 16px;
+    width: calc(100% - 32px);
   }
 
   .pick-media {

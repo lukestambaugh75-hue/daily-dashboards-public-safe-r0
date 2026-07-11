@@ -173,6 +173,30 @@ class VerifyLinksGuardTests(unittest.TestCase):
 
         self.assertEqual([verify_links.ROOT], events)
 
+    def test_main_verifies_the_real_local_html_graph_without_live_network(self):
+        original_guard = verify_links.assert_canonical_checkout
+        original_live = verify_links.check_live_url
+        verify_links.assert_canonical_checkout = lambda _root: None
+        verify_links.check_live_url = lambda _url, expect_html=False: None
+        try:
+            verify_links.main()
+        finally:
+            verify_links.assert_canonical_checkout = original_guard
+            verify_links.check_live_url = original_live
+
+    def test_local_link_accepts_an_existing_fragment_target(self):
+        verify_links.check_local_link(
+            verify_links.ROOT / "index.html",
+            "dashboards/stroller.html#price-ladder",
+        )
+
+    def test_local_link_rejects_a_missing_fragment_target(self):
+        with self.assertRaisesRegex(AssertionError, "fragment"):
+            verify_links.check_local_link(
+                verify_links.ROOT / "index.html",
+                "dashboards/stroller.html#definitely-missing",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,7 +3,7 @@
 
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 from urllib.request import Request, urlopen
 
 from canonical_checkout import assert_canonical_checkout
@@ -115,6 +115,20 @@ class LinkParser(HTMLParser):
             self.hrefs.append(href)
 
 
+class FragmentTargetParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.targets = set()
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        element_id = attrs.get("id")
+        if element_id:
+            self.targets.add(element_id)
+        if tag == "a" and attrs.get("name"):
+            self.targets.add(attrs["name"])
+
+
 def assert_no_forbidden_text(path):
     text = path.read_text(encoding="utf-8")
     lowered = text.lower()
@@ -128,16 +142,23 @@ def assert_no_forbidden_text(path):
 
 
 def check_local_link(source, href):
-    if href.startswith("#"):
-        return
     parsed = urlparse(href)
     if parsed.scheme in {"http", "https", "mailto"}:
         return
-    target = (source.parent / href).resolve()
+    local_path = unquote(parsed.path)
+    target = source if not local_path else (source.parent / local_path).resolve()
     if not str(target).startswith(str(ROOT.resolve())):
         raise AssertionError(f"{source.relative_to(ROOT)} links outside repo: {href}")
     if not target.exists():
         raise AssertionError(f"{source.relative_to(ROOT)} broken local link: {href}")
+    if parsed.fragment:
+        parser = FragmentTargetParser()
+        parser.feed(target.read_text(encoding="utf-8"))
+        fragment = unquote(parsed.fragment)
+        if fragment not in parser.targets:
+            raise AssertionError(
+                f"{source.relative_to(ROOT)} missing local fragment: {href}"
+            )
 
 
 def check_live_url(url, expect_html=False):
