@@ -34,14 +34,17 @@ FORBIDDEN = [
     "NextDecade Enterprise Skill Source",
     "Active Directory R3",
     "out/dashboard.html",
+    "kegerator-tracker-r0",
+    "ps5-tv-deal-tracker-r0",
+    "devin.mullen89@gmail.com",
 ]
 REQUIRED_BY_FILE = {
     "index.html": [
         "Top 3 Quality and Price",
-        "Open deep dashboard",
-        "Raptor value lead",
-        "Outdoor keg value",
-        "PS5 and TV stack",
+        "Open public-safe view",
+        "Raptor public-safe lead",
+        "Washer checkout gate",
+        "Nuna stroller price board",
         "Nuna Stroller Tracker",
         "Color index",
         "Green",

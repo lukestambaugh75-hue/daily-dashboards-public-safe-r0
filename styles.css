@@ -112,22 +112,29 @@ h1 {
 
 .pick-media {
   min-height: 112px;
-  background:
-    linear-gradient(180deg, rgba(16, 18, 20, 0.05), rgba(16, 18, 20, 0.72)),
-    var(--pick-image) center / cover no-repeat;
+  background: var(--pick-image);
   border-bottom: 1px solid var(--line);
 }
 
 .raptor-card {
-  --pick-image: url("https://lukestambaugh75-hue.github.io/ford-raptor-tracker-r0/assets/raptor-hero.png");
+  --pick-image:
+    linear-gradient(180deg, rgba(16, 18, 20, 0.02), rgba(16, 18, 20, 0.72)),
+    repeating-linear-gradient(135deg, #293a46 0 18px, #5f7f8a 18px 36px);
 }
 
-.keg-card {
-  --pick-image: url("https://lukestambaugh75-hue.github.io/kegerator-tracker-r0/assets/kegerator-hero.png");
+.washer-card {
+  --pick-image:
+    radial-gradient(circle at 32% 50%, #d7e5ea 0 25px, #65818b 26px 34px, transparent 35px),
+    radial-gradient(circle at 68% 50%, #d7e5ea 0 25px, #65818b 26px 34px, transparent 35px),
+    linear-gradient(135deg, #22343d, #58727c);
 }
 
-.electronics-card {
-  --pick-image: url("https://lukestambaugh75-hue.github.io/ps5-tv-deal-tracker-r0/assets/electronics-hero.png");
+.stroller-card {
+  --pick-image:
+    radial-gradient(circle at 35% 72%, #101820 0 15px, #c4d1d5 16px 20px, transparent 21px),
+    radial-gradient(circle at 67% 72%, #101820 0 15px, #c4d1d5 16px 20px, transparent 21px),
+    linear-gradient(145deg, transparent 42%, #9aaeb4 43% 49%, transparent 50%),
+    linear-gradient(135deg, #273b43, #5f767d);
 }
 
 .pick-top {
@@ -365,7 +372,9 @@ h1 {
 
 .table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .table th,
@@ -374,6 +383,7 @@ h1 {
   border-bottom: 1px solid var(--line);
   text-align: left;
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
 
 .table th {

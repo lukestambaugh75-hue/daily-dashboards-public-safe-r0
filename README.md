@@ -16,18 +16,18 @@ This repo is intentionally public. Do not add private repo links, local file pat
 raw source ledgers, token usage details, exact trip details, internal company
 content, ZIP/address references, or sensitive filenames.
 
-The main page is a top-3 quality-and-price decision layer. Deep tracker links
-open the granular live dashboards for Raptor, kegerators, and PS5 + TV.
+The main page is a top-3 quality-and-price decision layer for Luke/Julie-safe
+content. Every hub link stays inside this public-safe repository. Recipient-
+specific trackers remain in separate repositories and have no runtime link,
+asset, redirect, or source path from this hub.
 
 ## Included Public-Safe Views
 
-- Main dashboard: top 3 quality-and-price picks with deep tracker links.
-- Ford Raptor Tracker: granular live dashboard.
-- Kegerator Tracker: granular live dashboard.
-- PS5 and TV Tracker: granular live dashboard.
+- Main dashboard: top 3 public-safe quality-and-price picks.
 - Washer Deal Tracker: sanitized decision and checkout-status view.
 - Ford public-safe snapshot: sanitized market-summary view.
 - Baby Gear Tracker: sanitized budget and category-summary view.
+- Nuna Stroller Tracker: Julie-safe price and safety-decision view.
 
 ## Private Or Archived Views
 
