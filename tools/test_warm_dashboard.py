@@ -42,6 +42,13 @@ class WarmDashboardContractTests(unittest.TestCase):
         self.assertIn("Walmart", self.text)
         self.assertIn("https://www.amazon.com/dp/", self.text)
 
+    def test_tables_include_60_day_low_columns_and_current_strollers_only(self):
+        self.assertIn("60-day low", self.text)
+        self.assertIn("Low difference", self.text)
+        self.assertIn("NEW 60-DAY LOW", self.text)
+        self.assertNotIn("availability only", self.text.lower())
+        self.assertNotIn("Sold</td>", self.text)
+
     def test_old_frothy_surface_is_removed(self):
         self.assertNotIn("One calm view of what’s next.", self.text)
         self.assertNotIn("warm-combined", self.text)

@@ -25,7 +25,7 @@ from html import escape
 import json
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -86,6 +86,43 @@ def read_csv(path, tail=None):
     except OSError:
         return []
     return rows[-tail:] if tail else rows
+
+
+def _sixty_day_lows(path, key_name, *, retailer=None):
+    rows = read_csv(path)
+    dates = [row.get("observed_at") or row.get("date") for row in rows]
+    dates = [datetime.fromisoformat(str(value)[:10]).date() for value in dates if value]
+    if not dates:
+        return {}
+    as_of = max(dates)
+    cutoff = as_of - timedelta(days=60)
+    grouped = {}
+    for row in rows:
+        if retailer and (row.get("retailer") or "").lower() != retailer.lower():
+            continue
+        key = row.get(key_name)
+        value = row.get("price_usd")
+        date_value = row.get("observed_at") or row.get("date")
+        if not key or not value or not date_value:
+            continue
+        try:
+            observed = datetime.fromisoformat(str(date_value)[:10]).date()
+            price = float(value)
+        except (TypeError, ValueError):
+            continue
+        if cutoff <= observed <= as_of:
+            grouped.setdefault(key, []).append((observed, price))
+    return {
+        key: min((price for observed, price in values if observed < as_of), default=None)
+        for key, values in grouped.items()
+    }
+
+
+def _low_cell(current, prior_low):
+    if current is None or prior_low is None or current >= prior_low:
+        return "<span class=\"muted\">—</span>", "<span class=\"muted\">—</span>"
+    delta = prior_low - current
+    return '<span class="status-text safe">NEW 60-DAY LOW</span>', f'<strong>${delta:,.2f} lower</strong>'
 
 
 def num(row, key, cast=float):
@@ -408,7 +445,12 @@ def build_baby_stroller(baby_html):
     stroller = read_json(STROLLER_DATA)
     if not stroller or not baby_html:
         return None
-    listings = [item for item in stroller.get("listings", []) if item.get("price_usd") is not None]
+    unavailable_markers = ("sold", "out of stock", "out-of-stock", "ended", "not available", "backorder", "pre-order", "search results only", "verify current")
+    listings = [
+        item for item in stroller.get("listings", [])
+        if item.get("price_usd") is not None
+        and not any(marker in str(item.get("availability", "")).lower() for marker in unavailable_markers)
+    ]
     worthy = sorted(
         [item for item in listings if item.get("purchase_worthy") and item.get("action_level") in {"ready_safe", "message_verify"}],
         key=lambda item: (float(item.get("price_usd")), item.get("source_name") or ""),
@@ -433,6 +475,8 @@ def build_baby_stroller(baby_html):
     registry_value = f"{purchased}/{requested}" if requested else "--"
     safe_source = best_new.get("source_name") if best_new else "No verified new listing"
     worthy_source = lowest.get("source_name") if lowest else "No current lead"
+    stroller_lows = _sixty_day_lows(BABY / "stroller_history.csv", "listing_id")
+    registry_lows = _sixty_day_lows(BABY / "registry_history.csv", "asin", retailer="Amazon")
 
     def text(value, fallback="--"):
         return escape(str(value if value not in (None, "") else fallback))
@@ -440,12 +484,13 @@ def build_baby_stroller(baby_html):
     stroller_rows = []
     for item in sorted(listings, key=lambda row: (float(row.get("price_usd")), row.get("source_name") or "")):
         action = item.get("action_level") or item.get("availability") or "review"
+        low_label, low_delta = _low_cell(item.get("price_usd"), stroller_lows.get(item.get("id")))
         stroller_rows.append(
             f'<tr data-search="{text(" ".join(str(item.get(k, "")) for k in ("title", "source_name", "color", "availability", "action_level")))}">'
             f'<td><strong>{money(item.get("price_usd"))}</strong></td>'
             f'<td>{text(item.get("title"))}</td><td>{text(item.get("source_name"))}</td>'
             f'<td>{text(item.get("color"))}</td><td>{text(item.get("availability"))}</td>'
-            f'<td><span class="status-text {"safe" if action == "ready_safe" else "verify"}">{text(action)}</span></td></tr>'
+            f'<td>{low_label}<br>{low_delta}</td><td><span class="status-text {"safe" if action == "ready_safe" else "verify"}">{text(action)}</span></td></tr>'
         )
 
     registry_rows = []
@@ -458,6 +503,7 @@ def build_baby_stroller(baby_html):
             if url and str(url).startswith("https://") and "amazon.com/baby-reg/" not in str(url):
                 offers.append(f'<a class="offer-button" href="{text(url)}" target="_blank" rel="noopener noreferrer">{text(offer.get("retailer"), "Other retailer")}</a>')
         offer_buttons = "".join(offers) or '<span class="muted">No public offer link recorded</span>'
+        low_label, low_delta = _low_cell(price, registry_lows.get(item.get("asin")))
         registry_rows.append(
             f'<tr data-search="{text(" ".join(str(item.get(k, "")) for k in ("title", "category_normalized", "status", "checked_at")))}" data-detail="{detail_id}">'
             f'<td>{text(item.get("category_normalized"), "Uncategorized")}</td>'
@@ -465,8 +511,9 @@ def build_baby_stroller(baby_html):
             f'<td>{money(price) if price is not None else "--"}</td>'
             f'<td>{text(item.get("qty_requested"), "0")}</td><td>{text(item.get("qty_purchased"), "0")}</td>'
             f'<td>{text(item.get("status"))}</td><td>{text(item.get("checked_at"))}</td>'
+            f'<td>{low_label}<br>{low_delta}</td>'
             f'<td><button class="detail-toggle" type="button" aria-expanded="false" aria-controls="{detail_id}">View details</button></td></tr>'
-            f'<tr class="registry-detail" id="{detail_id}" hidden><td colspan="8"><strong>Offers and item context</strong><div class="offer-buttons">{offer_buttons}</div><span class="muted">ASIN: {text(item.get("asin"), "not recorded")} · {text(item.get("match_notes"), "No additional match note recorded.")}</span></td></tr>'
+            f'<tr class="registry-detail" id="{detail_id}" hidden><td colspan="10"><strong>Offers and item context</strong><div class="offer-buttons">{offer_buttons}</div><span class="muted">ASIN: {text(item.get("asin"), "not recorded")} · {text(item.get("match_notes"), "No additional match note recorded.")}</span></td></tr>'
         )
 
     gear_items = (read_json(BABY / "data" / "gear.json") or {}).get("price_items", [])
@@ -560,11 +607,11 @@ def build_baby_stroller(baby_html):
     </div></div></section>
     <div class="grid-wrap">
       <section class="view-panel" id="stroller-panel" role="tabpanel" aria-labelledby="stroller-tab">
-        <div class="sheet"><div class="sheet-head"><h2>Stroller leads</h2><span class="muted" id="stroller-count">{len(stroller_rows)} rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Price</th><th>Listing</th><th>Source</th><th>Color</th><th>Availability</th><th>Action</th></tr></thead><tbody>{"".join(stroller_rows)}</tbody></table><div class="empty-row">No stroller rows match the search.</div></div></div>
+        <div class="sheet"><div class="sheet-head"><h2>Stroller leads</h2><span class="muted" id="stroller-count">{len(stroller_rows)} rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Price</th><th>Listing</th><th>Source</th><th>Color</th><th>Availability</th><th>60-day low</th><th>Action</th></tr></thead><tbody>{"".join(stroller_rows)}</tbody></table><div class="empty-row">No stroller rows match the search.</div></div></div>
         <p class="notes">Safety rule: used infant car-seat bundles remain verify-first until crash history, labels, expiration, recalls, original parts, inserts, manual, and clear photos are proven. New/authorized retail is the clean fallback at {safe_price}.</p>
       </section>
       <section class="view-panel" id="registry-panel" role="tabpanel" aria-labelledby="registry-tab" hidden>
-        <div class="sheet"><div class="sheet-head"><h2>Baby registry — all reconciled rows</h2><span class="muted" id="registry-count">{len(registry_rows)} rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Category</th><th>Registry item</th><th>Amazon price</th><th>Qty requested</th><th>Qty purchased</th><th>Status</th><th>Checked</th><th>Actions</th></tr></thead><tbody>{"".join(registry_rows)}</tbody></table><div class="empty-row">No registry rows match the search.</div></div></div>
+        <div class="sheet"><div class="sheet-head"><h2>Baby registry — all reconciled rows</h2><span class="muted" id="registry-count">{len(registry_rows)} rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Category</th><th>Registry item</th><th>Amazon price</th><th>Qty requested</th><th>Qty purchased</th><th>Status</th><th>Checked</th><th>60-day low</th><th>Low difference</th><th>Actions</th></tr></thead><tbody>{"".join(registry_rows)}</tbody></table><div class="empty-row">No registry rows match the search.</div></div></div>
         <p class="notes">Registry rows show the reconciled item data without exposing the private registry URL or account identifiers.</p>
       </section>
       <section class="view-panel" id="gear-panel" role="tabpanel" aria-labelledby="gear-tab" hidden>
