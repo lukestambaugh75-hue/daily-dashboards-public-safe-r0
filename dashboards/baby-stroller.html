@@ -6,576 +6,118 @@
   <title>Baby + Stroller Dashboard - Public Safe</title>
   <link rel="stylesheet" href="../styles.css">
   <style>
-    :root { color-scheme: light; --warm-ivory: #f8f5ef; --warm-paper: #fffdf9; --warm-ink: #292723; --warm-muted: #756f66; --warm-line: #e4ddd1; --warm-sand: #d6c0a6; --warm-olive: #60705b; --warm-rose: #a66e5d; }
-    body.warm-combined { background: var(--warm-ivory); color: var(--warm-ink); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    .warm-combined .warm-hero { padding: 72px 0 46px; background: var(--warm-ivory); border-bottom: 1px solid var(--warm-line); }
-    .warm-combined .warm-hero .wrap { max-width: 980px; }
-    .warm-combined .warm-kicker { color: var(--warm-rose); font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-    .warm-combined h1 { max-width: 760px; margin: 18px 0 18px; font-size: clamp(2.8rem, 7vw, 6.8rem); line-height: .94; letter-spacing: -.07em; font-weight: 650; }
-    .warm-combined .warm-lead { max-width: 650px; color: var(--warm-muted); font-size: 1.08rem; }
-    .warm-combined .warm-meta { color: var(--warm-muted); font-size: .84rem; }
-    .warm-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 46px 0 0; border-top: 1px solid var(--warm-line); border-bottom: 1px solid var(--warm-line); background: var(--warm-line); }
-    .warm-metric { min-height: 150px; padding: 25px 22px; background: var(--warm-paper); }
-    .warm-metric strong { display: block; margin: 8px 0 4px; font-size: clamp(2rem, 4vw, 3.6rem); font-weight: 620; letter-spacing: -.05em; }
-    .warm-metric small { color: var(--warm-muted); }
-    .warm-combined main { background: var(--warm-ivory); }
-    .warm-combined .warm-section { padding: 52px 0 16px; }
-    .warm-combined .warm-section .wrap { max-width: 980px; }
-    .warm-combined h2 { font-size: clamp(1.7rem, 3vw, 2.65rem); letter-spacing: -.04em; font-weight: 620; }
-    .warm-combined .warm-switch { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
-    .warm-tabs { display: inline-flex; padding: 4px; border: 1px solid var(--warm-line); border-radius: 999px; background: #eee8de; }
-    .warm-tab { min-height: 42px; padding: 9px 18px; border: 0; border-radius: 999px; background: transparent; color: var(--warm-muted); font: inherit; font-weight: 750; cursor: pointer; }
-    .warm-tab[aria-selected="true"] { background: var(--warm-paper); color: var(--warm-ink); box-shadow: 0 2px 7px rgba(76, 61, 42, .12); }
-    .warm-tab:focus-visible { outline: 3px solid var(--warm-sand); outline-offset: 3px; }
-    .warm-combined .warm-switch-help { max-width: 420px; margin-bottom: 0; color: var(--warm-muted); text-align: right; }
-    .warm-combined .worth-grid { display: grid; gap: 0; border-top: 1px solid var(--warm-line); }
-    .warm-combined .worth-row { display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--warm-line); }
-    .warm-combined .worth-price { font-size: 1.8rem; font-weight: 650; letter-spacing: -.04em; }
-    .warm-combined .worth-title { margin: 0 0 4px; font-size: 1.06rem; font-weight: 750; }
-    .warm-combined .worth-copy { margin: 0; color: var(--warm-muted); font-size: .9rem; }
-    .warm-combined .warm-badge { display: inline-flex; width: fit-content; padding: 5px 9px; border-radius: 999px; background: #e4ebdf; color: #53644e; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
-    .warm-combined .warm-badge.verify { background: #f1e4dc; color: #8b584a; }
-    .warm-combined .warm-detail-panel[hidden] { display: none; }
-    .warm-combined .warm-detail-panel > .section:first-child { padding-top: 28px; }
-    .warm-combined .button { border-color: var(--warm-line); background: var(--warm-paper); color: var(--warm-ink); border-radius: 999px; }
-    .warm-combined .button.primary { border-color: var(--warm-olive); background: var(--warm-olive); color: #fff; }
-    .warm-combined .section, .warm-combined .hero { background: transparent; }
-    .warm-combined .deal-card, .warm-combined .panel, .warm-combined .search-card, .warm-combined .card { border-color: var(--warm-line); border-radius: 4px; background: var(--warm-paper); box-shadow: none; }
-    .warm-combined .metric { border-color: var(--warm-line); border-radius: 4px; background: var(--warm-paper); color: var(--warm-ink); box-shadow: none; }
-    .warm-combined .metric .meta, .warm-combined .metric strong { color: var(--warm-ink); }
-    .warm-combined .bar-track { background: #ece5da; }
-    .warm-combined .bar-fill { background: var(--warm-olive); }
-    .warm-combined .bar-fill.amber { background: var(--warm-rose); }
-    .warm-combined .table-wrap { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
-    .warm-combined .price-table { min-width: 980px; }
-    .warm-combined .footer { border-top: 1px solid var(--warm-line); background: var(--warm-paper); color: var(--warm-muted); }
-    @media (max-width: 680px) {
-      .warm-combined .warm-hero { padding-top: 44px; }
-      .warm-summary { grid-template-columns: 1fr; }
-      .warm-combined .warm-switch { display: block; }
-      .warm-combined .warm-switch-help { margin-top: 18px; text-align: left; }
-      .warm-tabs { width: 100%; }
-      .warm-tab { flex: 1; }
-      .warm-combined .worth-row { grid-template-columns: 72px minmax(0, 1fr); gap: 12px; }
-      .warm-combined .worth-row .button { grid-column: 2; width: fit-content; }
+    :root { color-scheme: light; --grid-bg: #f4f6f8; --grid-paper: #fff; --grid-ink: #20252b; --grid-muted: #65707b; --grid-line: #cbd3dc; --grid-blue: #dcecff; --grid-green: #e6f3e8; --grid-amber: #fff3d8; }
+    body.grid-dashboard { margin: 0; background: var(--grid-bg); color: var(--grid-ink); font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .grid-dashboard .grid-wrap { width: min(1240px, calc(100% - 28px)); margin: 0 auto; }
+    .grid-dashboard .grid-header { padding: 28px 0 20px; background: var(--grid-paper); border-bottom: 1px solid var(--grid-line); }
+    .grid-dashboard h1 { margin: 0 0 4px; font-size: clamp(1.65rem, 3vw, 2.5rem); letter-spacing: -.04em; }
+    .grid-dashboard h2 { margin: 0; font-size: 1.25rem; }
+    .grid-dashboard .subhead, .grid-dashboard .muted { color: var(--grid-muted); }
+    .grid-dashboard .subhead { margin: 0; }
+    .grid-dashboard .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 20px; border: 1px solid var(--grid-line); }
+    .grid-dashboard .summary-cell { padding: 12px 14px; background: var(--grid-paper); border-right: 1px solid var(--grid-line); }
+    .grid-dashboard .summary-cell:last-child { border-right: 0; }
+    .grid-dashboard .summary-label { display: block; color: var(--grid-muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
+    .grid-dashboard .summary-value { display: block; margin-top: 4px; font-size: 1.35rem; font-weight: 700; }
+    .grid-dashboard .toolbar { position: sticky; top: 0; z-index: 2; padding: 12px 0; background: rgba(244,246,248,.96); border-bottom: 1px solid var(--grid-line); }
+    .grid-dashboard .toolbar-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .grid-dashboard button, .grid-dashboard input { min-height: 36px; border: 1px solid var(--grid-line); border-radius: 3px; font: inherit; }
+    .grid-dashboard button { padding: 7px 12px; background: var(--grid-paper); color: var(--grid-ink); cursor: pointer; }
+    .grid-dashboard button[aria-selected="true"], .grid-dashboard button.primary { background: #245b8f; border-color: #245b8f; color: #fff; }
+    .grid-dashboard button:focus-visible, .grid-dashboard input:focus-visible { outline: 3px solid #8bb9e7; outline-offset: 1px; }
+    .grid-dashboard input { flex: 1 1 260px; padding: 7px 10px; background: var(--grid-paper); }
+    .grid-dashboard .view-panel[hidden] { display: none; }
+    .grid-dashboard .sheet { margin: 18px 0 34px; background: var(--grid-paper); border: 1px solid var(--grid-line); }
+    .grid-dashboard .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px; border-bottom: 1px solid var(--grid-line); }
+    .grid-dashboard .sheet-scroll { overflow-x: auto; }
+    .grid-dashboard table { width: 100%; border-collapse: collapse; text-align: left; }
+    .grid-dashboard th { position: sticky; top: 61px; z-index: 1; background: #e9eef3; color: #37424e; font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }
+    .grid-dashboard th, .grid-dashboard td { padding: 9px 10px; border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line); vertical-align: top; }
+    .grid-dashboard tr:nth-child(even) td { background: #fafbfd; }
+    .grid-dashboard th:last-child, .grid-dashboard td:last-child { border-right: 0; }
+    .grid-dashboard .item-title { min-width: 360px; }
+    .grid-dashboard .status-text { display: inline-block; padding: 2px 6px; border-radius: 2px; font-size: .75rem; font-weight: 700; }
+    .grid-dashboard .status-text.safe { background: var(--grid-green); color: #275e32; }
+    .grid-dashboard .status-text.verify { background: var(--grid-blue); color: #1d4e79; }
+    .grid-dashboard .status-text.caution { background: var(--grid-amber); color: #805a16; }
+    .grid-dashboard .empty-row { display: none; padding: 16px; color: var(--grid-muted); }
+    .grid-dashboard .notes { margin: 0 0 34px; color: var(--grid-muted); }
+    @media (max-width: 720px) {
+      .grid-dashboard .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-dashboard .summary-cell:nth-child(2) { border-right: 0; }
+      .grid-dashboard .summary-cell:nth-child(-n+2) { border-bottom: 1px solid var(--grid-line); }
+      .grid-dashboard .toolbar-row { align-items: stretch; }
+      .grid-dashboard .toolbar-row button { flex: 1 1 auto; }
+      .grid-dashboard input { flex-basis: 100%; }
     }
   </style>
 </head>
-<body class="warm-combined">
-  <header class="warm-hero">
-    <div class="wrap">
-      <p class="warm-kicker">Baby gear · stroller · 2026-07-12</p>
-      <h1>One calm view of what’s next.</h1>
-      <p class="warm-lead">A shared buying view for Luke and Julie. Start with the clearest safe choice, then open only the detail layer you need.</p>
-      <div class="warm-summary" aria-label="Dashboard summary">
-        <div class="warm-metric"><span class="warm-kicker">Best new stroller price</span><strong>$800</strong><small>Bambi Baby · new and ready to verify at checkout</small></div>
-        <div class="warm-metric"><span class="warm-kicker">Registry verified</span><strong>0/142</strong><small>Our baby list · shared with Luke + Julie</small></div>
-      </div>
+<body class="grid-dashboard">
+  <header class="grid-header"><div class="grid-wrap">
+    <h1>Baby + Stroller Dashboard</h1>
+    <p class="subhead">Luke + Julie · refreshed 2026-07-12 · spreadsheet view of stroller leads, registry items, and baby gear safety notes</p>
+    <div class="summary-grid" aria-label="Dashboard summary">
+      <div class="summary-cell"><span class="summary-label">Best new stroller</span><span class="summary-value">$800</span><span class="muted">Bambi Baby</span></div>
+      <div class="summary-cell"><span class="summary-label">Best verify-first lead</span><span class="summary-value">$650</span><span class="muted">Facebook Marketplace</span></div>
+      <div class="summary-cell"><span class="summary-label">Registry rows</span><span class="summary-value">136</span><span class="muted">0/142 requested quantity</span></div>
+      <div class="summary-cell"><span class="summary-label">Gear rows</span><span class="summary-value">19</span><span class="muted">safety flags included</span></div>
     </div>
-  </header>
+  </div></header>
   <main>
-    <section class="warm-section" aria-labelledby="decision-title">
-      <div class="wrap">
-        <div class="warm-switch">
-          <div><p class="warm-kicker">Your next decision</p><h2 id="decision-title">Worth looking at</h2><p class="warm-meta">The $650 lead is verify-first. The $800 new option is the clean fallback.</p></div>
-          <p class="warm-switch-help">Facebook Marketplace is a message-before-buy lead. Keep the new option in view if safety proof or timing matters more than savings.</p>
-        </div>
-        <div class="worth-grid">
-          <div class="worth-row"><div class="worth-price">$650</div><div><p class="warm-badge verify">Verify first</p><p class="worth-title">Exact-system lead with savings</p><p class="worth-copy">Message the seller and confirm crash history, labels, expiry, recalls, parts, inserts, manual, and clear photos.</p></div><a class="button" href="#stroller-details-panel">See stroller detail</a></div>
-          <div class="worth-row"><div class="worth-price">$800</div><div><p class="warm-badge">Safe fallback</p><p class="worth-title">New, preferred Granite option</p><p class="worth-copy">Use Bambi Baby as the clean buy-now path if the resale lead cannot prove the car-seat checklist.</p></div><a class="button primary" href="#stroller-details-panel">Open safe path</a></div>
-        </div>
-      </div>
-    </section>
-    <section class="warm-section" aria-labelledby="details-title">
-      <div class="wrap">
-        <div class="warm-switch"><div><p class="warm-kicker">Go deeper when you need to</p><h2 id="details-title">Details</h2></div><div class="warm-tabs" role="tablist" aria-label="Dashboard details"><button class="warm-tab" id="stroller-tab" type="button" role="tab" aria-selected="true" aria-controls="stroller-details-panel">Stroller</button><button class="warm-tab" id="baby-tab" type="button" role="tab" aria-selected="false" aria-controls="baby-details-panel">Baby gear</button></div></div>
-      </div>
-    </section>
-    <section class="warm-detail-panel" id="stroller-details-panel" role="tabpanel" aria-labelledby="stroller-tab">
-    <section class="section" id="purchase-worthy">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Purchase-worthy</p>
-            <h2>Deals worth acting on or messaging first</h2>
-          </div>
-          <p>These are the leads Julie can act on today: message the seller first for proof, or use the safe Granite retail fallback.</p>
-        </div>
-        <div class="deal-grid">
-        <article class="deal-card verify">
-          <div class="deal-top">
-            <span class="status-chip">Message seller first</span>
-            <strong>$650</strong>
-          </div>
-          <h3>Nuna Pipa Urbn + TRVL LX - cedar</h3>
-          <p class="source-line">Facebook Marketplace / Cedar / Snippet says New; must verify in signed-in listing</p>
-          <p>Potential under-target Marketplace lead if truly new/sealed or fully checklist-proven. Do not treat it as safe from snippets alone.</p>
-          <p class="next-step"><strong>Next step:</strong> Open in signed-in Facebook, confirm exact bundle, sealed/open-box proof, crash history if not sealed, manufacture/model labels, recall status, expiration, all original inserts/manual, and clear photos.</p>
-          <div class="flag-row"><span>exact system</span> <span>under target</span> <span>facebook snippet</span> <span>car seat proof required</span></div>
-          <a class="button source-link" href="https://www.facebook.com/marketplace/category/search/?query=nuna-trvl-lx-pipa-urbn-travel">Open Marketplace lead</a>
-        </article>
-
-        <article class="deal-card verify">
-          <div class="deal-top">
-            <span class="status-chip">Message seller first</span>
-            <strong>$650</strong>
-          </div>
-          <h3>TRVL Ix+PIPA urbn travel system</h3>
-          <p class="source-line">OfferUp / Facebook Marketplace discovery / Unknown / Used - excellent condition claim; car-seat history unverified</p>
-          <p>Best priced exact-system lead still worth messaging at $650, under target, but the car seat remains unsafe to use unless the seller proves the full checklist.</p>
-          <p class="next-step"><strong>Next step:</strong> Message seller for crash history, manufacture/model labels, expiration, recall check, original parts/inserts/manual, and clear photos before considering purchase.</p>
-          <div class="flag-row"><span>exact system</span> <span>under target</span> <span>offerup</span> <span>marketplace discovery</span></div>
-          <a class="button source-link" href="https://offerup.com/item/detail/6d789495-5d61-3d7f-91ae-a63b77f741e7">Open source</a>
-        </article>
-
-        <article class="deal-card ready">
-          <div class="deal-top">
-            <span class="status-chip">Safe buy today</span>
-            <strong>$800</strong>
-          </div>
-          <h3>Nuna TRVL LX + PIPA urbn Travel System</h3>
-          <p class="source-line">Bambi Baby / Granite / New</p>
-          <p>Cleanest safe Granite buy today if the used leads fail safety verification. It is exact, new, in stock, and the preferred color after price/safety.</p>
-          <p class="next-step"><strong>Next step:</strong> Use as the buy-now fallback if the used leads fail safety verification or timing matters more than savings.</p>
-          <div class="flag-row"><span>granite</span> <span>new</span> <span>authorized retailer</span> <span>safe buy now</span></div>
-          <a class="button source-link" href="https://www.bambibaby.com/products/nuna-trvl-lx-pipa-urbn-travel-system">Open retailer</a>
-        </article></div>
-      </div>
-    </section>
-
-    <section class="section" id="watchlist">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Certified resale watchlist</p>
-            <h2>Good prices to keep tracking, not purchase-ready while out of stock</h2>
-          </div>
-          <p>These are still useful target deals. Keep alerts on, but do not treat them like active buy buttons until stock returns.</p>
-        </div>
-        <div class="deal-grid">
-        <article class="deal-card watch">
-          <div class="deal-top">
-            <span class="status-chip">Track restock</span>
-            <strong>$560</strong>
-          </div>
-          <h3>Nuna TRVL lx + PIPA urbn travel system</h3>
-          <p class="source-line">Stork Exchange / Unknown / Open-box/resale site category; exact item condition not purchase-confirmed</p>
-          <p>Excellent watch price at $560 if it returns in stock, but not actionable today while sold out.</p>
-          <p class="next-step"><strong>Next step:</strong> Watch for restock; only buy after checkout confirms actual stock, condition, included parts, and car-seat safety/return terms.</p>
-          <div class="flag-row"><span>exact system</span> <span>open box resale</span> <span>under target</span> <span>sold out</span></div>
-          <a class="button source-link" href="https://storkexchange.co/products/nuna-trvl-lx-pipa-urbn-travel-system">Open resale listing</a>
-        </article>
-
-        <article class="deal-card watch">
-          <div class="deal-top">
-            <span class="status-chip">Track restock</span>
-            <strong>$664.99</strong>
-          </div>
-          <h3>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Cedar</h3>
-          <p class="source-line">GoodBuy Gear / Cedar / Barely Used</p>
-          <p>Best certified-resale target price if it returns; color is Cedar, but price beats Granite preference. Not purchase-ready while out of stock.</p>
-          <p class="next-step"><strong>Next step:</strong> Track restock notification; buy only if the page is actually in stock at checkout.</p>
-          <div class="flag-row"><span>exact system</span> <span>certified resale</span> <span>under target</span> <span>out of stock</span></div>
-          <a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-cedar">Open resale listing</a>
-        </article>
-
-        <article class="deal-card watch">
-          <div class="deal-top">
-            <span class="status-chip">Track restock</span>
-            <strong>$680.99</strong>
-          </div>
-          <h3>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Caviar</h3>
-          <p class="source-line">GoodBuy Gear / Caviar / Open Box</p>
-          <p>Excellent certified open-box buy if restocked under $700; not Granite, but price wins. Not purchase-ready while out of stock.</p>
-          <p class="next-step"><strong>Next step:</strong> Track restock notification; buy only if the page is actually in stock at checkout.</p>
-          <div class="flag-row"><span>exact system</span> <span>certified resale</span> <span>open box</span> <span>under target</span></div>
-          <a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-caviar">Open resale listing</a>
-        </article>
-
-        <article class="deal-card watch">
-          <div class="deal-top">
-            <span class="status-chip">Track restock</span>
-            <strong>$765.99</strong>
-          </div>
-          <h3>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Curated</h3>
-          <p class="source-line">GoodBuy Gear / Curated / Open Box</p>
-          <p>Worth watching, but the $665 and $681 GoodBuy Gear targets are better if they return. Not purchase-ready while out of stock.</p>
-          <p class="next-step"><strong>Next step:</strong> Track only; do not prefer over a cheaper certified restock or live verified Marketplace/OfferUp lead.</p>
-          <div class="flag-row"><span>exact system</span> <span>certified resale</span> <span>open box</span> <span>out of stock</span></div>
-          <a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-curated">Open resale listing</a>
-        </article></div>
-      </div>
-    </section>
-
-    <section class="section" id="price-ladder">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Lowest to highest</p>
-            <h2>All leads ranked by price for Julie</h2>
-          </div>
-          <p>Price is the primary sort. Safety/action status explains whether the price is actually usable.</p>
-        </div>
-        <div class="table-wrap">
-          <table class="price-table">
-            <thead>
-              <tr><th>Rank</th><th>Price</th><th>Source</th><th>Listing</th><th>Color</th><th>Availability</th><th>Action</th><th>Julie read</th><th>Link</th></tr>
-            </thead>
-            <tbody>
-            <tr class="caution">
-              <td>1</td>
-              <td><strong>$400</strong><small>$400 below $800</small></td>
-              <td>OfferUp<small>Danbury, CT</small></td>
-              <td>Nuna TRVL LX + PIPA urbn Stroller &amp; Car Seat Travel System<small>exact_system</small></td>
-              <td>Unknown</td>
-              <td>Sold<small>Used (normal wear)</small></td>
-              <td><span class="status-chip">Backup only</span><small>sold_not_available</small></td>
-              <td>Useful price comp only; not available.</td>
-              <td><a class="button source-link" href="https://offerup.com/item/detail/1fb16c6f-0225-32bf-bd63-176cddc6039a">Open source</a></td>
-            </tr>
-
-            <tr class="watch">
-              <td>2</td>
-              <td><strong>$560</strong><small>$240 below $800</small></td>
-              <td>Stork Exchange<small>Online open-box resale</small></td>
-              <td>Nuna TRVL lx + PIPA urbn travel system<small>exact_system</small></td>
-              <td>Unknown</td>
-              <td>Out of stock<small>Open-box/resale site category; exact item condition not purchase-confirmed</small></td>
-              <td><span class="status-chip">Track restock</span><small>open_box_resale_but_unavailable</small></td>
-              <td>Excellent watch price at $560 if it returns in stock, but not actionable today while sold out.</td>
-              <td><a class="button source-link" href="https://storkexchange.co/products/nuna-trvl-lx-pipa-urbn-travel-system">Open resale listing</a></td>
-            </tr>
-
-            <tr class="caution">
-              <td>3</td>
-              <td><strong>$600</strong><small>$200 below $800</small></td>
-              <td>OfferUp<small>Renton, WA</small></td>
-              <td>Nuna TRVL LX + PIPA urbn Stroller &amp; Car Seat Travel System<small>exact_system</small></td>
-              <td>Curated</td>
-              <td>Sold<small>Used (normal wear); claimed one month use</small></td>
-              <td><span class="status-chip">Backup only</span><small>sold_not_available</small></td>
-              <td>Useful price comp only; not available.</td>
-              <td><a class="button source-link" href="https://offerup.com/item/detail/208c4f63-90e6-3cca-b87c-66c1d7181df5">Open source</a></td>
-            </tr>
-
-            <tr class="caution">
-              <td>4</td>
-              <td><strong>$600</strong><small>$200 below $800</small></td>
-              <td>OfferUp<small>Irvine, CA</small></td>
-              <td>Nuna TRVL LX Stroller &amp; PIPA Urbn Infant Car Seat Travel System<small>exact_system</small></td>
-              <td>Unknown</td>
-              <td>Sold<small>Used (normal wear)</small></td>
-              <td><span class="status-chip">Backup only</span><small>sold_not_available</small></td>
-              <td>Useful price comp only; not available.</td>
-              <td><a class="button source-link" href="https://offerup.com/item/detail/5de62c47-3739-3cdf-a2ed-8af64437b671">Open source</a></td>
-            </tr>
-
-            <tr class="verify">
-              <td>5</td>
-              <td><strong>$650</strong><small>$150 below $800</small></td>
-              <td>Facebook Marketplace<small>Lincoln (from snippet)</small></td>
-              <td>Nuna Pipa Urbn + TRVL LX - cedar<small>exact_system</small></td>
-              <td>Cedar</td>
-              <td>Marketplace snippet only; open and message seller to verify<small>Snippet says New; must verify in signed-in listing</small></td>
-              <td><span class="status-chip">Message seller first</span><small>marketplace_new_claim_unverified</small></td>
-              <td>Potential under-target Marketplace lead if truly new/sealed or fully checklist-proven. Do not treat it as safe from snippets alone.</td>
-              <td><a class="button source-link" href="https://www.facebook.com/marketplace/category/search/?query=nuna-trvl-lx-pipa-urbn-travel">Open Marketplace lead</a></td>
-            </tr>
-
-            <tr class="verify">
-              <td>6</td>
-              <td><strong>$650</strong><small>$150 below $800</small></td>
-              <td>OfferUp / Facebook Marketplace discovery<small>Lathrop, CA</small></td>
-              <td>TRVL Ix+PIPA urbn travel system<small>exact_system</small></td>
-              <td>Unknown</td>
-              <td>Prior OfferUp item page was visible and not marked sold; message seller before relying on it<small>Used - excellent condition claim; car-seat history unverified</small></td>
-              <td><span class="status-chip">Message seller first</span><small>used_car_seat_unknown</small></td>
-              <td>Best priced exact-system lead still worth messaging at $650, under target, but the car seat remains unsafe to use unless the seller proves the full checklist.</td>
-              <td><a class="button source-link" href="https://offerup.com/item/detail/6d789495-5d61-3d7f-91ae-a63b77f741e7">Open source</a></td>
-            </tr>
-
-            <tr class="watch">
-              <td>7</td>
-              <td><strong>$664.99</strong><small>$135.01 below $800</small></td>
-              <td>GoodBuy Gear<small>Online certified resale</small></td>
-              <td>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Cedar<small>exact_system</small></td>
-              <td>Cedar</td>
-              <td>Out of stock<small>Barely Used</small></td>
-              <td><span class="status-chip">Track restock</span><small>certified_resale_but_unavailable</small></td>
-              <td>Best certified-resale target price if it returns; color is Cedar, but price beats Granite preference. Not purchase-ready while out of stock.</td>
-              <td><a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-cedar">Open resale listing</a></td>
-            </tr>
-
-            <tr class="watch">
-              <td>8</td>
-              <td><strong>$680.99</strong><small>$119.01 below $800</small></td>
-              <td>GoodBuy Gear<small>Online certified resale</small></td>
-              <td>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Caviar<small>exact_system</small></td>
-              <td>Caviar</td>
-              <td>Out of stock<small>Open Box</small></td>
-              <td><span class="status-chip">Track restock</span><small>certified_resale_but_unavailable</small></td>
-              <td>Excellent certified open-box buy if restocked under $700; not Granite, but price wins. Not purchase-ready while out of stock.</td>
-              <td><a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-caviar">Open resale listing</a></td>
-            </tr>
-
-            <tr class="caution">
-              <td>9</td>
-              <td><strong>$750</strong><small>$50 below $800</small></td>
-              <td>Mercari<small>Online resale</small></td>
-              <td>Nuna Travel System w/ Car Seat<small>partial_or_unclear</small></td>
-              <td>Black</td>
-              <td>In stock per Mercari schema; not exact-model verified<small>Used; description not provided</small></td>
-              <td><span class="status-chip">Backup only</span><small>used_car_seat_unknown_exact_match_unverified</small></td>
-              <td>Backup-only broad resale lead; price is below retail but exact model and car-seat safety are not proven.</td>
-              <td></td>
-            </tr>
-
-            <tr class="watch">
-              <td>10</td>
-              <td><strong>$765.99</strong><small>$34.01 below $800</small></td>
-              <td>GoodBuy Gear<small>Online certified resale</small></td>
-              <td>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Curated<small>exact_system</small></td>
-              <td>Curated</td>
-              <td>Out of stock<small>Open Box</small></td>
-              <td><span class="status-chip">Track restock</span><small>certified_resale_but_unavailable</small></td>
-              <td>Worth watching, but the $665 and $681 GoodBuy Gear targets are better if they return. Not purchase-ready while out of stock.</td>
-              <td><a class="button source-link" href="https://goodbuygear.com/products/nuna-trvl-lx-pipa-urbn-infant-travel-system-2024-curated">Open resale listing</a></td>
-            </tr>
-
-            <tr class="caution">
-              <td>11</td>
-              <td><strong>$780</strong><small>$20 below $800</small></td>
-              <td>eBay<small>Local pickup listing</small></td>
-              <td>Nuna TRVL LX Stroller Granite, PIPA URBN Travel System<small>exact_system</small></td>
-              <td>Granite</td>
-              <td>Ended; item no longer available<small>New</small></td>
-              <td><span class="status-chip">Backup only</span><small>sold_not_available</small></td>
-              <td>Useful price comp only; not available.</td>
-              <td></td>
-            </tr>
-
-            <tr class="info">
-              <td>12</td>
-              <td><strong>$800</strong><small>same as $800 retail</small></td>
-              <td>Albee Baby<small>Online retail</small></td>
-              <td>Nuna TRVL LX + PIPA urbn Baseless Infant Car Seat Travel System - Cedar<small>exact_system</small></td>
-              <td>Cedar</td>
-              <td>Backorder; ships by mid August when checked<small>New</small></td>
-              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
-              <td>Retail backup only; Cedar and backordered, so Bambi Granite is cleaner today.</td>
-              <td><a class="button source-link" href="https://www.albeebaby.com/products/nuna-trvl-lx-pipa-urbn-travel-system-cedar-1">Open retailer</a></td>
-            </tr>
-
-            <tr class="info">
-              <td>13</td>
-              <td><strong>$800</strong><small>same as $800 retail</small></td>
-              <td>Albee Baby<small>Online retail</small></td>
-              <td>Nuna TRVL LX + PIPA urbn Baseless Infant Car Seat Travel System - Granite<small>exact_system</small></td>
-              <td>Granite</td>
-              <td>Out-of-stock/mixed availability signals; checkout-verify only<small>New</small></td>
-              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
-              <td>Good rewards if stock returns, but Bambi Baby is cleaner today because Albee shows out-of-stock/mixed availability.</td>
-              <td><a class="button source-link" href="https://www.albeebaby.com/products/nuna-pipa-urbn-trvl-lx-travel-system-granite">Open retailer</a></td>
-            </tr>
-
-            <tr class="ready">
-              <td>14</td>
-              <td><strong>$800</strong><small>same as $800 retail</small></td>
-              <td>Bambi Baby<small>Online retail</small></td>
-              <td>Nuna TRVL LX + PIPA urbn Travel System<small>exact_system</small></td>
-              <td>Granite</td>
-              <td>In stock; ships in 24-48 hours when checked<small>New</small></td>
-              <td><span class="status-chip">Safe buy today</span><small>new_authorized_retailer</small></td>
-              <td>Cleanest safe Granite buy today if the used leads fail safety verification. It is exact, new, in stock, and the preferred color after price/safety.</td>
-              <td><a class="button source-link" href="https://www.bambibaby.com/products/nuna-trvl-lx-pipa-urbn-travel-system">Open retailer</a></td>
-            </tr>
-
-            <tr class="info">
-              <td>15</td>
-              <td><strong>$800</strong><small>same as $800 retail</small></td>
-              <td>Born Baby<small>Online retail</small></td>
-              <td>TRVL LX + PIPA URBN Travel System - Free Shipping<small>exact_system</small></td>
-              <td>Cedar/Chocolate</td>
-              <td>Add to cart for Cedar/Chocolate; ships from warehouse in 5-10 business days<small>New</small></td>
-              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
-              <td>Retail backup only; not Granite and slower than the in-stock Bambi Granite source.</td>
-              <td><a class="button source-link" href="https://shopbornbaby.com/products/trvl-lx-pipa-urbn-travel-system-free-shipping-2">Open retailer</a></td>
-            </tr>
-
-            <tr class="info">
-              <td>16</td>
-              <td><strong>$800</strong><small>same as $800 retail</small></td>
-              <td>Cozy Kids Furniture<small>Online retail</small></td>
-              <td>Nuna TRVL LX Stroller + PIPA Urbn Travel System<small>exact_system</small></td>
-              <td>Cedar, Caviar/Chocolate, Granite, or Caviar</td>
-              <td>Add to cart shown when checked<small>New</small></td>
-              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
-              <td>Retail backup at MSRP; useful only if Bambi Baby inventory disappears.</td>
-              <td><a class="button source-link" href="https://cozykidsfurniture.com/products/nuna-trvl-lx-stroller-plus-pipa-urbn-travel-system">Open retailer</a></td>
-            </tr>
-
-            <tr class="info">
-              <td>17</td>
-              <td><strong>$800</strong><small>same as $800 retail</small></td>
-              <td>Kidsland<small>Online retail</small></td>
-              <td>Nuna TRVL lx + PIPA URBN Travel System<small>exact_system</small></td>
-              <td>Cedar, Granite, or Caviar/Chocolate shown unavailable</td>
-              <td>Pre-order; ships end of July when checked<small>New</small></td>
-              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
-              <td>Retail backup only; timing is worse than an in-stock Granite source.</td>
-              <td><a class="button source-link" href="https://www.kidslandusa.com/products/nuna-trvl-lx-pipa-urbn-travel-system">Open retailer</a></td>
-            </tr>
-
-            <tr class="info">
-              <td>18</td>
-              <td><strong>$800</strong><small>same as $800 retail</small></td>
-              <td>Little Folks NYC<small>Online retail / NYC store</small></td>
-              <td>Nuna TRVL LX + PIPA Urbn Travel System<small>exact_system</small></td>
-              <td>Granite or Cedar</td>
-              <td>Cedar and Granite shown in stock when checked<small>New</small></td>
-              <td><span class="status-chip">Retail backup</span><small>new_retailer</small></td>
-              <td>Useful Granite retail backup at MSRP; not better than Albee rewards or Bambi authorized-retailer fallback unless checkout/shipping is better.</td>
-              <td><a class="button source-link" href="https://littlefolksnyc.com/products/nuna-trvl-lx-pipa-urbn-travel-system">Open retailer</a></td>
-            </tr>
-
-            <tr class="caution">
-              <td>19</td>
-              <td><strong>verify</strong><small>prior OfferUp page showed $275/$300; current accessible checks did not freshly expose a live price</small></td>
-              <td>OfferUp<small>San Antonio, TX</small></td>
-              <td>Nuna Trvl Lx + Pipa urbn<small>exact_system</small></td>
-              <td>Unknown</td>
-              <td>Verify current price and availability before treating as live<small>Used (normal wear); missing one Velcro cheek pad</small></td>
-              <td><span class="status-chip">Backup only</span><small>used_car_seat_unknown_missing_part_price_unverified</small></td>
-              <td>Was the prior lowest lead, but do not rank it as purchase-worthy because the current price was not freshly visible and the car seat is missing a cheek pad.</td>
-              <td><a class="button source-link" href="https://offerup.com/item/detail/36bc7b00-56fc-32bf-aa19-15ac3b4f3d1b">Open source</a></td>
-            </tr>
-
-            <tr class="caution">
-              <td>20</td>
-              <td><strong>verify</strong><small>search result page</small></td>
-              <td>eBay<small>Online resale</small></td>
-              <td>Nuna strollers broad resale search<small>partial_or_unclear</small></td>
-              <td>Mixed</td>
-              <td>Search results only<small>Mixed</small></td>
-              <td><span class="status-chip">Backup only</span><small>not_applicable_search_only</small></td>
-              <td>No action today; visible eBay rows are not a cleaner current exact TRVL lx + PIPA urbn deal.</td>
-              <td><a class="button source-link" href="https://www.ebay.com/b/Nuna-Strollers/66700/bn_27358876">Open source</a></td>
-            </tr></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="wrap">
-        <div class="grid two">
-          <article class="panel chart">
-            <h2>How to use the board</h2>
-            <table class="table">
-              <tbody>
-                <tr><td>Lowest raw price</td><td>Good for search visibility only; not automatically safe.</td></tr>
-                <tr><td>Message seller first</td><td>Ask for proof before any payment or meetup.</td></tr>
-                <tr><td>Track restock</td><td>Certified resale price is attractive and still worth tracking, but not available now.</td></tr>
-                <tr><td>Safe buy today</td><td>New/authorized retailer, exact bundle, preferred Granite if available.</td></tr>
-              </tbody>
-            </table>
-          </article>
-          <article class="panel chart">
-            <h2>Safety rules</h2>
-            <ul class="rule-list"><li><strong>used-car-seat-history:</strong> Do not treat a used infant car seat as safe unless crash history, manufacture label, model, recall status, expiration, all original parts/inserts, manual, and clear photos are verified.</li>
-<li><strong>marketplace-default:</strong> Marketplace bundles can be price-worthy leads, but the car seat remains verify-first unless the seller can prove it is unused/open-box or fully passes the safety checklist.</li>
-<li><strong>price-over-color:</strong> Price outranks color. Granite receives a preference note only when safety and price are close.</li></ul>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Search coverage</p>
-            <h2>What was searched</h2>
-          </div>
-          <p>Marketplace snippets are treated as leads, not final verified listings, because Facebook can hide details until opened in a signed-in browser.</p>
-        </div>
-        <div class="search-grid">
-        <article class="search-card">
-          <span>online_new</span>
-          <h3>Nuna TRVL lx PIPA urbn travel system Granite price</h3>
-          <p>Fresh checks found exact/new retail still clustered at $800. Bambi Baby showed Granite in stock at $800 with Add to Cart and 24-48 hour shipping. Little Folks NYC showed Cedar and Granite in stock at $800 with Add to Cart. Cozy Kids showed all variants, including Granite, at $800 with Add to Cart. Born Baby showed Cedar/Chocolate at $800 with Add to Cart and 5-10 business day warehouse shipping. Albee Granite showed $800 rewards language but also out-of-stock/mixed availability, so it is a checkout-verify backup today.</p>
-          <small>Checked 2026-07-12</small>
-        </article>
-
-        <article class="search-card">
-          <span>certified_resale</span>
-          <h3>site:goodbuygear.com Nuna TRVL LX PIPA Urbn Infant Travel System</h3>
-          <p>GoodBuy Gear exact certified/open-box listings remained below retail but unavailable: Cedar Barely Used $664.99 out of stock, Caviar Open Box $680.99 out of stock, and Curated Open Box $765.99 out of stock. GoodBuy Gear pages still show quality/safety-check inspection language and certified-reseller language. Stork Exchange exact open-box row at $560 remains a restock watch item, not purchase-ready.</p>
-          <small>Checked 2026-07-12</small>
-        </article>
-
-        <article class="search-card">
-          <span>facebook_marketplace</span>
-          <h3>Nuna TRVL LX PIPA urbn Facebook Marketplace</h3>
-          <p>Facebook Marketplace search snippets still surfaced exact or adjacent Nuna TRVL/PIPA urbn leads, including under-target new-claim snippets, but no signed-in item page evidence proved sealed/open-box status or the full car-seat checklist. Treat Facebook rows as discovery only until opened and verified in a signed-in Marketplace session.</p>
-          <small>Checked 2026-07-12</small>
-        </article>
-
-        <article class="search-card">
-          <span>broad_web_resale</span>
-          <h3>Nuna TRVL LX PIPA urbn resale OfferUp eBay Mercari</h3>
-          <p>Broad resale checks found no cleaner current exact-system buy than the prior OfferUp/Facebook discovery lead at $650. Mercari currently surfaced broad Nuna travel-system rows, including a used $750 Nuna Travel System w/ Car Seat with no description and no car-seat proof; eBay broad Nuna stroller results were mostly partial/non-exact and no current exact Granite buy was purchase-ready.</p>
-          <small>Checked 2026-07-12</small>
-        </article></div>
-      </div>
-    </section>
-  </section>
-    <section class="warm-detail-panel" id="baby-details-panel" role="tabpanel" aria-labelledby="baby-tab" hidden>
-    <section class="section">
-      <div class="wrap">
-        <div class="metric-row"><div class="metric"><span class="meta">Gear items tracked</span><strong>19</strong></div><div class="metric"><span class="meta">Mid-tier new total</span><strong>$2,887</strong></div><div class="metric"><span class="meta">Registry items</span><strong>136</strong></div><div class="metric"><span class="meta">Registry purchased</span><strong>0 of 142</strong></div></div>
-      </div>
-    </section>
-    <section class="section">
-      <div class="wrap">
-        <div class="grid two">
-          <article class="panel chart">
-            <h2>Registry progress</h2>
-<div class="bar-row"><div class="bar-label">Purchased</div><div class="bar-track"><div class="bar-fill amber" style="width: 2%"></div></div><div class="bar-value">0%</div></div><div class="bar-row"><div class="bar-label">Remaining</div><div class="bar-track"><div class="bar-fill amber" style="width: 100%"></div></div><div class="bar-value">142 items</div></div>            <p class="meta">Arrival January 2027. Counts come from the signed-in registry reconciliation.</p>
-          </article>
-          <article class="panel chart">
-            <h2>Biggest-ticket gear</h2>
-<div class="bar-row"><div class="bar-label">Stroller (car-seat compatible)</div><div class="bar-track"><div class="bar-fill amber" style="width: 100%"></div></div><div class="bar-value">$450</div></div><div class="bar-row"><div class="bar-label">Convertible crib</div><div class="bar-track"><div class="bar-fill amber" style="width: 67%"></div></div><div class="bar-value">$300</div></div><div class="bar-row"><div class="bar-label">Bassinet (early months)</div><div class="bar-track"><div class="bar-fill amber" style="width: 56%"></div></div><div class="bar-value">$250</div></div><div class="bar-row"><div class="bar-label">Changing table / dresser-top station</div><div class="bar-track"><div class="bar-fill amber" style="width: 53%"></div></div><div class="bar-value">$240</div></div><div class="bar-row"><div class="bar-label">Rear-facing infant car seat</div><div class="bar-track"><div class="bar-fill amber" style="width: 51%"></div></div><div class="bar-value">$230</div></div><div class="bar-row"><div class="bar-label">Double electric breast pump</div><div class="bar-track"><div class="bar-fill amber" style="width: 50%"></div></div><div class="bar-value">$226</div></div>            <p class="meta">Amber marks items flagged not to buy used on safety grounds.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-    <section class="section">
-      <div class="wrap">
-        <article class="panel chart">
-          <h2>Do not buy these used</h2>
-          <table class="table"><tbody><tr><td>Rear-facing infant car seat</td><td>NHTSA/AAP advise against used car seats: cannot verify it was never in a crash, isn't past its expiration date, or has no open recalls.</td></tr><tr><td>Stroller (car-seat compatible)</td><td></td></tr><tr><td>Baby carrier / wrap</td><td></td></tr><tr><td>Diaper bag</td><td></td></tr><tr><td>Bassinet (early months)</td><td></td></tr><tr><td>Convertible crib</td><td>Used crib: confirm it meets CURRENT CPSC crib standards (post-2011, no drop-sides), check it is not on a CPSC recall list, and ensure ALL original hardware and assembly instructions are included before use.</td></tr><tr><td>Crib mattress (firm, flat)</td><td>Used crib mattress: must be FIRM (no sag/indentation), flat, clean and dry with no mold/stains, fit snugly with no gaps, and not be on a CPSC recall list per current safe-sleep standards.</td></tr><tr><td>Video baby monitor</td><td></td></tr><tr><td>Changing table / dresser-top station</td><td></td></tr><tr><td>Diaper pail</td><td></td></tr><tr><td>Double electric breast pump</td><td>FDA classifies OPEN-system pumps as single-user (cannot be fully sanitized between users). The S1 Plus is CLOSED-system so reuse is possible with a new personal accessory kit, but verify the unit is genuinely closed-system; insurance usually covers a brand-new pump.</td></tr><tr><td>Nursing pillow</td><td></td></tr><tr><td>Bottle sterilizer</td><td></td></tr><tr><td>Bottle warmer</td><td></td></tr><tr><td>Baby bathtub</td><td></td></tr><tr><td>Baby swing / bouncer</td><td></td></tr><tr><td>White-noise machine</td><td></td></tr><tr><td>Play mat / activity gym</td><td></td></tr><tr><td>Baby safety gate</td><td></td></tr></tbody></table>
-        </article>
-      </div>
-    </section>
-
-  </section>
+    <section class="toolbar"><div class="grid-wrap"><div class="toolbar-row" role="tablist" aria-label="Dashboard sheets">
+      <button id="stroller-tab" type="button" role="tab" aria-selected="true" aria-controls="stroller-panel">Stroller deals</button>
+      <button id="registry-tab" type="button" role="tab" aria-selected="false" aria-controls="registry-panel">Baby registry</button>
+      <button id="gear-tab" type="button" role="tab" aria-selected="false" aria-controls="gear-panel">Gear safety</button>
+      <button id="previous-view" type="button" aria-label="Previous sheet">‹ Previous</button>
+      <button id="next-view" type="button" aria-label="Next sheet">Next ›</button>
+      <input id="table-search" type="search" placeholder="Search the current sheet…" aria-label="Search the current sheet">
+    </div></div></section>
+    <div class="grid-wrap">
+      <section class="view-panel" id="stroller-panel" role="tabpanel" aria-labelledby="stroller-tab">
+        <div class="sheet"><div class="sheet-head"><h2>Stroller leads</h2><span class="muted" id="stroller-count">18 rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Price</th><th>Listing</th><th>Source</th><th>Color</th><th>Availability</th><th>Action</th></tr></thead><tbody><tr data-search="Nuna TRVL LX + PIPA urbn Stroller &amp; Car Seat Travel System OfferUp Unknown Sold backup_only"><td><strong>$400</strong></td><td>Nuna TRVL LX + PIPA urbn Stroller &amp; Car Seat Travel System</td><td>OfferUp</td><td>Unknown</td><td>Sold</td><td><span class="status-text verify">backup_only</span></td></tr><tr data-search="Nuna TRVL lx + PIPA urbn travel system Stork Exchange Unknown Out of stock watch_restock"><td><strong>$560</strong></td><td>Nuna TRVL lx + PIPA urbn travel system</td><td>Stork Exchange</td><td>Unknown</td><td>Out of stock</td><td><span class="status-text verify">watch_restock</span></td></tr><tr data-search="Nuna TRVL LX + PIPA urbn Stroller &amp; Car Seat Travel System OfferUp Curated Sold backup_only"><td><strong>$600</strong></td><td>Nuna TRVL LX + PIPA urbn Stroller &amp; Car Seat Travel System</td><td>OfferUp</td><td>Curated</td><td>Sold</td><td><span class="status-text verify">backup_only</span></td></tr><tr data-search="Nuna TRVL LX Stroller &amp; PIPA Urbn Infant Car Seat Travel System OfferUp Unknown Sold backup_only"><td><strong>$600</strong></td><td>Nuna TRVL LX Stroller &amp; PIPA Urbn Infant Car Seat Travel System</td><td>OfferUp</td><td>Unknown</td><td>Sold</td><td><span class="status-text verify">backup_only</span></td></tr><tr data-search="Nuna Pipa Urbn + TRVL LX - cedar Facebook Marketplace Cedar Marketplace snippet only; open and message seller to verify message_verify"><td><strong>$650</strong></td><td>Nuna Pipa Urbn + TRVL LX - cedar</td><td>Facebook Marketplace</td><td>Cedar</td><td>Marketplace snippet only; open and message seller to verify</td><td><span class="status-text verify">message_verify</span></td></tr><tr data-search="TRVL Ix+PIPA urbn travel system OfferUp / Facebook Marketplace discovery Unknown Prior OfferUp item page was visible and not marked sold; message seller before relying on it message_verify"><td><strong>$650</strong></td><td>TRVL Ix+PIPA urbn travel system</td><td>OfferUp / Facebook Marketplace discovery</td><td>Unknown</td><td>Prior OfferUp item page was visible and not marked sold; message seller before relying on it</td><td><span class="status-text verify">message_verify</span></td></tr><tr data-search="Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Cedar GoodBuy Gear Cedar Out of stock watch_restock"><td><strong>$665</strong></td><td>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Cedar</td><td>GoodBuy Gear</td><td>Cedar</td><td>Out of stock</td><td><span class="status-text verify">watch_restock</span></td></tr><tr data-search="Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Caviar GoodBuy Gear Caviar Out of stock watch_restock"><td><strong>$681</strong></td><td>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Caviar</td><td>GoodBuy Gear</td><td>Caviar</td><td>Out of stock</td><td><span class="status-text verify">watch_restock</span></td></tr><tr data-search="Nuna Travel System w/ Car Seat Mercari Black In stock per Mercari schema; not exact-model verified backup_only"><td><strong>$750</strong></td><td>Nuna Travel System w/ Car Seat</td><td>Mercari</td><td>Black</td><td>In stock per Mercari schema; not exact-model verified</td><td><span class="status-text verify">backup_only</span></td></tr><tr data-search="Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Curated GoodBuy Gear Curated Out of stock watch_restock"><td><strong>$766</strong></td><td>Nuna TRVL LX + PIPA Urbn Infant Travel System, 2024, Curated</td><td>GoodBuy Gear</td><td>Curated</td><td>Out of stock</td><td><span class="status-text verify">watch_restock</span></td></tr><tr data-search="Nuna TRVL LX Stroller Granite, PIPA URBN Travel System eBay Granite Ended; item no longer available backup_only"><td><strong>$780</strong></td><td>Nuna TRVL LX Stroller Granite, PIPA URBN Travel System</td><td>eBay</td><td>Granite</td><td>Ended; item no longer available</td><td><span class="status-text verify">backup_only</span></td></tr><tr data-search="Nuna TRVL LX + PIPA urbn Baseless Infant Car Seat Travel System - Cedar Albee Baby Cedar Backorder; ships by mid August when checked retail_backup"><td><strong>$800</strong></td><td>Nuna TRVL LX + PIPA urbn Baseless Infant Car Seat Travel System - Cedar</td><td>Albee Baby</td><td>Cedar</td><td>Backorder; ships by mid August when checked</td><td><span class="status-text verify">retail_backup</span></td></tr><tr data-search="Nuna TRVL LX + PIPA urbn Baseless Infant Car Seat Travel System - Granite Albee Baby Granite Out-of-stock/mixed availability signals; checkout-verify only retail_backup"><td><strong>$800</strong></td><td>Nuna TRVL LX + PIPA urbn Baseless Infant Car Seat Travel System - Granite</td><td>Albee Baby</td><td>Granite</td><td>Out-of-stock/mixed availability signals; checkout-verify only</td><td><span class="status-text verify">retail_backup</span></td></tr><tr data-search="Nuna TRVL LX + PIPA urbn Travel System Bambi Baby Granite In stock; ships in 24-48 hours when checked ready_safe"><td><strong>$800</strong></td><td>Nuna TRVL LX + PIPA urbn Travel System</td><td>Bambi Baby</td><td>Granite</td><td>In stock; ships in 24-48 hours when checked</td><td><span class="status-text safe">ready_safe</span></td></tr><tr data-search="TRVL LX + PIPA URBN Travel System - Free Shipping Born Baby Cedar/Chocolate Add to cart for Cedar/Chocolate; ships from warehouse in 5-10 business days retail_backup"><td><strong>$800</strong></td><td>TRVL LX + PIPA URBN Travel System - Free Shipping</td><td>Born Baby</td><td>Cedar/Chocolate</td><td>Add to cart for Cedar/Chocolate; ships from warehouse in 5-10 business days</td><td><span class="status-text verify">retail_backup</span></td></tr><tr data-search="Nuna TRVL LX Stroller + PIPA Urbn Travel System Cozy Kids Furniture Cedar, Caviar/Chocolate, Granite, or Caviar Add to cart shown when checked retail_backup"><td><strong>$800</strong></td><td>Nuna TRVL LX Stroller + PIPA Urbn Travel System</td><td>Cozy Kids Furniture</td><td>Cedar, Caviar/Chocolate, Granite, or Caviar</td><td>Add to cart shown when checked</td><td><span class="status-text verify">retail_backup</span></td></tr><tr data-search="Nuna TRVL lx + PIPA URBN Travel System Kidsland Cedar, Granite, or Caviar/Chocolate shown unavailable Pre-order; ships end of July when checked retail_backup"><td><strong>$800</strong></td><td>Nuna TRVL lx + PIPA URBN Travel System</td><td>Kidsland</td><td>Cedar, Granite, or Caviar/Chocolate shown unavailable</td><td>Pre-order; ships end of July when checked</td><td><span class="status-text verify">retail_backup</span></td></tr><tr data-search="Nuna TRVL LX + PIPA Urbn Travel System Little Folks NYC Granite or Cedar Cedar and Granite shown in stock when checked retail_backup"><td><strong>$800</strong></td><td>Nuna TRVL LX + PIPA Urbn Travel System</td><td>Little Folks NYC</td><td>Granite or Cedar</td><td>Cedar and Granite shown in stock when checked</td><td><span class="status-text verify">retail_backup</span></td></tr></tbody></table><div class="empty-row">No stroller rows match the search.</div></div></div>
+        <p class="notes">Safety rule: used infant car-seat bundles remain verify-first until crash history, labels, expiration, recalls, original parts, inserts, manual, and clear photos are proven. New/authorized retail is the clean fallback at $800.</p>
+      </section>
+      <section class="view-panel" id="registry-panel" role="tabpanel" aria-labelledby="registry-tab" hidden>
+        <div class="sheet"><div class="sheet-head"><h2>Baby registry — all reconciled rows</h2><span class="muted" id="registry-count">136 rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Category</th><th>Registry item</th><th>Amazon price</th><th>Qty requested</th><th>Qty purchased</th><th>Status</th><th>Checked</th></tr></thead><tbody><tr data-search="Tub Works® Dinosaur Mold Free Bath Toys, 6 Pack | Sealed, No Hole Bath Toys Design Keeps Moisture Out | Soft, Squeezable &amp; Float on Water | Easy-Grip Baby &amp; Toddler Bath Toy Set | Great Baby Pool Toys Bathing active 2026-07-05"><td>Bathing</td><td class="item-title">Tub Works® Dinosaur Mold Free Bath Toys, 6 Pack | Sealed, No Hole Bath Toys Design Keeps Moisture Out | Soft, Squeezable &amp; Float on Water | Easy-Grip Baby &amp; Toddler Bath Toy Set | Great Baby Pool Toys</td><td>$14</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Munchkin® Learn™ Bath Letters and Numbers 36pc Toddler Bath Toy Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Munchkin® Learn™ Bath Letters and Numbers 36pc Toddler Bath Toy</td><td>$5</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Munchkin® Super Scoop™ Hanging Bath Toy Storage with Quick Drying Mesh, Grey Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Munchkin® Super Scoop™ Hanging Bath Toy Storage with Quick Drying Mesh, Grey</td><td>$13</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="The Honest Company 2-in-1 Baby Shampoo &amp; Body Wash, Fragrance-Free, Tear-Free, Hypoallergenic, Naturally Derived, Sensitive Skin, 10 fl oz Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">The Honest Company 2-in-1 Baby Shampoo &amp; Body Wash, Fragrance-Free, Tear-Free, Hypoallergenic, Naturally Derived, Sensitive Skin, 10 fl oz</td><td>$11</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Momcozy Baby Towel with Hooded-Original Design Baby Towel Set -Soft &amp; Absorbent- Shower Gifts or Bath Essential for Infant, Newborn, Toddler, Marine Sea Turtle Shells Magic Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Momcozy Baby Towel with Hooded-Original Design Baby Towel Set -Soft &amp; Absorbent- Shower Gifts or Bath Essential for Infant, Newborn, Toddler, Marine Sea Turtle Shells Magic</td><td>$25</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="TBEZY Baby Hooded Towel with Unique Animal Design Ultra Soft Thick Cotton Bath Towel for Newborn (Tiger) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">TBEZY Baby Hooded Towel with Unique Animal Design Ultra Soft Thick Cotton Bath Towel for Newborn (Tiger)</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Spasilk Baby 10 Pack Soft Terry Bath Washcloth Wipes Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Spasilk Baby 10 Pack Soft Terry Bath Washcloth Wipes</td><td>$8</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Timgle 10 Pcs Coral Velvet Pee Covers Baby Boy, Strong Water Absorption Pee Shield for Baby Boy, Reusable Diaper Changing Accessory for Boys Newborn Gift(Dinosaur) Diapering active 2026-07-05"><td>Diapering</td><td class="item-title">Timgle 10 Pcs Coral Velvet Pee Covers Baby Boy, Strong Water Absorption Pee Shield for Baby Boy, Reusable Diaper Changing Accessory for Boys Newborn Gift(Dinosaur)</td><td>$18</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Tiny Twinkle Portable Diaper Changing Pad | Waterproof, Wipeable &amp; Compact Baby Changing Pad for Travel | Smart Wipes Pocket &amp; Organized Storage| Newborn Shower Gift (Gingham) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Tiny Twinkle Portable Diaper Changing Pad | Waterproof, Wipeable &amp; Compact Baby Changing Pad for Travel | Smart Wipes Pocket &amp; Organized Storage| Newborn Shower Gift (Gingham)</td><td>$24</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Fortella Baby Diaper Caddy, 3 Tier Rolling Storage Cart for Baby Essentials, Diaper Cart with Detachable Dividers, Storage Organizer &amp; Baby Bottle Organizer for Bedroom, Living Room (Beige) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Fortella Baby Diaper Caddy, 3 Tier Rolling Storage Cart for Baby Essentials, Diaper Cart with Detachable Dividers, Storage Organizer &amp; Baby Bottle Organizer for Bedroom, Living Room (Beige)</td><td>$38</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Parker Baby Diaper Caddy - Nursery Storage Bin and Car Organizer for Diapers and Baby Wipes - Oatmeal, Regular Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Parker Baby Diaper Caddy - Nursery Storage Bin and Car Organizer for Diapers and Baby Wipes - Oatmeal, Regular</td><td>$21</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="4 pcs Clear Zipper Pouches,Hard Shell Zipper Case, Toiletry Bag for Travel, CLear Diaper Bag, Toiletry Pouch, Travel Organizer, Cosmetic Bag,Toy Storage Bins (M+3S) (Blue) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">4 pcs Clear Zipper Pouches,Hard Shell Zipper Case, Toiletry Bag for Travel, CLear Diaper Bag, Toiletry Pouch, Travel Organizer, Cosmetic Bag,Toy Storage Bins (M+3S) (Blue)</td><td>$18</td><td>2</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="BAGSMART Diaper Bag Tote, Hospital Bag for Labor Delivery, Puffy Maternity Travel Diaper Tote, Baby Bag with Pacifier Case Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">BAGSMART Diaper Bag Tote, Hospital Bag for Labor Delivery, Puffy Maternity Travel Diaper Tote, Baby Bag with Pacifier Case</td><td>$38</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Skip Hop Baby Changing Pad Nursery Style Wipe-Clean Contoured with Cushioned Foam, Non-Skid Base, Built-in Safety Belt &amp; Tuck-Away Toy Bar Fits Standard Changing Tables, Oat Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Skip Hop Baby Changing Pad Nursery Style Wipe-Clean Contoured with Cushioned Foam, Non-Skid Base, Built-in Safety Belt &amp; Tuck-Away Toy Bar Fits Standard Changing Tables, Oat</td><td>$68</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Triple Paste Diaper Rash Cream, Hypoallergenic Medicated Ointment for Babies, 16 oz (Packaging May Vary) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Triple Paste Diaper Rash Cream, Hypoallergenic Medicated Ointment for Babies, 16 oz (Packaging May Vary)</td><td>$25</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Aquaphor Baby Healing Ointment Advanced Therapy Skin Protectant, Dry Skin and Diaper Rash Ointment, 7 Oz Tube Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Aquaphor Baby Healing Ointment Advanced Therapy Skin Protectant, Dry Skin and Diaper Rash Ointment, 7 Oz Tube</td><td>$13</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Diaper Genie Bags Refills 270 Count (Pack of 3) with Max Odor Lock | Holds Up to 810 Newborn Diapers Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Diaper Genie Bags Refills 270 Count (Pack of 3) with Max Odor Lock | Holds Up to 810 Newborn Diapers</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Diaper Genie Complete Diaper Pail (White) – Includes 1 Refill (Holds 270 Newborn Diapers) &amp; 1 Carbon Filter Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Diaper Genie Complete Diaper Pail (White) – Includes 1 Refill (Holds 270 Newborn Diapers) &amp; 1 Carbon Filter</td><td>$66</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Tiny Twinkle Mess Proof Wet Bags | 2-Pack Reusable Waterproof Wet Bags for Swimsuits | Baby Clothes | Travel &amp; Diaper Bag (Dinosaur, Ocean Life) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Tiny Twinkle Mess Proof Wet Bags | 2-Pack Reusable Waterproof Wet Bags for Swimsuits | Baby Clothes | Travel &amp; Diaper Bag (Dinosaur, Ocean Life)</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="HealthyBaby Our Wet Wipes | EWG Verified Safe | 100% Water &amp; Plant Based | Unscented &amp; Safe for Sensitive Skin | Fragrance Free and Totally Chlorine Free (8 packs, 512 wipes) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">HealthyBaby Our Wet Wipes | EWG Verified Safe | 100% Water &amp; Plant Based | Unscented &amp; Safe for Sensitive Skin | Fragrance Free and Totally Chlorine Free (8 packs, 512 wipes)</td><td>$55</td><td>3</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Our Diapers | The First EWG Verified &amp; Microbiome-Friendly Diaper | Size NB (&lt;10 lbs) 32 Count | 12-Hour Leak Protection | Made with Organic Cotton &amp; Plant-Derived Materials | Totally Chlorine Free Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Our Diapers | The First EWG Verified &amp; Microbiome-Friendly Diaper | Size NB (&lt;10 lbs) 32 Count | 12-Hour Leak Protection | Made with Organic Cotton &amp; Plant-Derived Materials | Totally Chlorine Free</td><td>$23</td><td>2</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Pampers Pure Baby Diapers, Size 0 (&gt;10 lbs), 76, Up to 100% Leakproof, Premium Hypoallergenic Soft Diapers Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Pampers Pure Baby Diapers, Size 0 (&gt;10 lbs), 76, Up to 100% Leakproof, Premium Hypoallergenic Soft Diapers</td><td>$30</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="GROSMIMI Spill Proof no Spill Magic Sippy Cup with Straw with Handle for Baby and Toddlers, Customizable, PPSU, BPA Free 6 oz (Sky blue) Feeding active 2026-07-05"><td>Feeding</td><td class="item-title">GROSMIMI Spill Proof no Spill Magic Sippy Cup with Straw with Handle for Baby and Toddlers, Customizable, PPSU, BPA Free 6 oz (Sky blue)</td><td>$23</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Olababy Silicone Training Cup with Straw Lid | Babies Water Drinking Cup | 6+ Mo Infant To 12-18 Months Toddler | Sippy Cup For Kids &amp; Smoothie Cup | Baby Led Weaning (Blueberry, 5 oz) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Olababy Silicone Training Cup with Straw Lid | Babies Water Drinking Cup | 6+ Mo Infant To 12-18 Months Toddler | Sippy Cup For Kids &amp; Smoothie Cup | Baby Led Weaning (Blueberry, 5 oz)</td><td>$16</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="ezpz Tiny Spoon (2 Pack in Sage) - 6 Months+ - 100% Silicone Spoon for Baby Led Weaning + Purees - Designed by a Pediatric Feeding Specialist - Shower Essentials &amp; Gifts Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">ezpz Tiny Spoon (2 Pack in Sage) - 6 Months+ - 100% Silicone Spoon for Baby Led Weaning + Purees - Designed by a Pediatric Feeding Specialist - Shower Essentials &amp; Gifts</td><td>$16</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="NumNum Baby Spoons Set, Feeding Littles x Silicone Pre-Spoon GOOtensils for Baby Led Weaning, Self-Feeding &amp; Teething, First Stage Toddler Utensils for Ages 6+ Months, 3-Pack, BPA-Free (Neutrals) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">NumNum Baby Spoons Set, Feeding Littles x Silicone Pre-Spoon GOOtensils for Baby Led Weaning, Self-Feeding &amp; Teething, First Stage Toddler Utensils for Ages 6+ Months, 3-Pack, BPA-Free (Neutrals)</td><td>$17</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="ezpz Tiny Cup (Sage/Olive) - 4 months+ - 100% Silicone Training Cup for Infants - Designed by a Pediatric Feeding Specialist - Baby-Led Weaning Essentials &amp; Baby Gifts Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">ezpz Tiny Cup (Sage/Olive) - 4 months+ - 100% Silicone Training Cup for Infants - Designed by a Pediatric Feeding Specialist - Baby-Led Weaning Essentials &amp; Baby Gifts</td><td>$15</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Chefhandy Baby Food Maker with Stainless Steel Steam Basket | 5-in-1 Baby Food Processor, Steamer &amp; Blender for Homemade Baby Food, BPA-Free, 6 Reusable Pouches, Ideal for Newborns &amp; Infants, Green Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Chefhandy Baby Food Maker with Stainless Steel Steam Basket | 5-in-1 Baby Food Processor, Steamer &amp; Blender for Homemade Baby Food, BPA-Free, 6 Reusable Pouches, Ideal for Newborns &amp; Infants, Green</td><td>$69</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Konssy Muslin Baby Bibs 8 Pack Baby Bandana Drool Bibs Cotton for Unisex Boys and Girls, Soft Absorbent Set for Teething and Drooling Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Konssy Muslin Baby Bibs 8 Pack Baby Bandana Drool Bibs Cotton for Unisex Boys and Girls, Soft Absorbent Set for Teething and Drooling</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Organic Burp Cloths Baby Boy &amp; Girl, 5-pack Cotton Burp Rags (Marine Muse) | Super Absorbent Cotton Burping Cloths for Babies, Soft, Plush, Newborn, Infant Towels, Milk Spit Up Rags, Large 21x35 Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Organic Burp Cloths Baby Boy &amp; Girl, 5-pack Cotton Burp Rags (Marine Muse) | Super Absorbent Cotton Burping Cloths for Babies, Soft, Plush, Newborn, Infant Towels, Milk Spit Up Rags, Large 21x35</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Konssy 10 pack baby muslin bandana bibs for drooling and teething | 100% Organic Cotton Bibs for Boy Girl, Soft Absorbent 6-Layer Thick Cloth, Pre-Washed Less Shrinkage, Newborn Infant Toddler Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Konssy 10 pack baby muslin bandana bibs for drooling and teething | 100% Organic Cotton Bibs for Boy Girl, Soft Absorbent 6-Layer Thick Cloth, Pre-Washed Less Shrinkage, Newborn Infant Toddler</td><td>$18</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Lifewit Large Baby Bottle Drying Rack with Drain Mat &amp; 15 Hooks, Newborn Essentials Must Haves, Bottle Storage Organizer for Countertop, Cabinet, Rack Dryer Holder for Pacifiers, Pump Parts Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Lifewit Large Baby Bottle Drying Rack with Drain Mat &amp; 15 Hooks, Newborn Essentials Must Haves, Bottle Storage Organizer for Countertop, Cabinet, Rack Dryer Holder for Pacifiers, Pump Parts</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="PandaEar 3 Pack Baby Food Freezer Tray with Lids, Silicone Baby Food Storage Container for Homemade Baby Food, Fruit, Purees &amp; Breastmilk (Pink/Green/Linen) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">PandaEar 3 Pack Baby Food Freezer Tray with Lids, Silicone Baby Food Storage Container for Homemade Baby Food, Fruit, Purees &amp; Breastmilk (Pink/Green/Linen)</td><td>$10</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="PandaEar Set of 3 Silicone Baby Bibs Waterproof, Soft, Unisex, 10-72 Months Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">PandaEar Set of 3 Silicone Baby Bibs Waterproof, Soft, Unisex, 10-72 Months</td><td>$9</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Haakaa Silicone Cleaning Brush Kit – Household Cleaning Brushes for Bottles and Crevices – Food-Grade Silicone: Dishwasher Safe (Brush-Mist Blue) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Haakaa Silicone Cleaning Brush Kit – Household Cleaning Brushes for Bottles and Crevices – Food-Grade Silicone: Dishwasher Safe (Brush-Mist Blue)</td><td>$16</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Momcozy Bottle Sterilizer and Dryer, Modular Nesting Space Saving Design, 6 Bottles Capacity, 4 in 1 Compact Sterilizer for Baby Bottles, Breast Pump Parts &amp; Newborn Essentials, Drying Rack Included Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Momcozy Bottle Sterilizer and Dryer, Modular Nesting Space Saving Design, 6 Bottles Capacity, 4 in 1 Compact Sterilizer for Baby Bottles, Breast Pump Parts &amp; Newborn Essentials, Drying Rack Included</td><td>$65</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="2 Pack Baby Silicone Mat, with Suction Base and 8 Stretchable Straps, Seposeve Baby Placemats, Activity Mat for Infants to Toddlers, Keeps Babies Essentials Off the Floor, Green Blue Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">2 Pack Baby Silicone Mat, with Suction Base and 8 Stretchable Straps, Seposeve Baby Placemats, Activity Mat for Infants to Toddlers, Keeps Babies Essentials Off the Floor, Green Blue</td><td>$26</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Momcozy Elite Baby Kit, Superior Baby Shower &amp; Registry Essential Kit for Grooming &amp; Health &amp; Cleansing Care, Electric Nail File &amp; Nasal Aspirator,Tummy Wrap,Thermometer,Bath Brush,Teether,Storage Bag Health &amp; Baby Care active 2026-07-05"><td>Health &amp; Baby Care</td><td class="item-title">Momcozy Elite Baby Kit, Superior Baby Shower &amp; Registry Essential Kit for Grooming &amp; Health &amp; Cleansing Care, Electric Nail File &amp; Nasal Aspirator,Tummy Wrap,Thermometer,Bath Brush,Teether,Storage Bag</td><td>$90</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Wooden Baby Hair Brush Set for Newborns, Toddlers - Soft Goat Bristle Baby Brush and Comb Set Newborn Grooming Kit for Cradle Cap Care, Durable &amp; Gentle, Boy, Girl Infant Essentials (Regular, Walnut) Health &amp; Baby Care active 2026-07-05"><td>Health &amp; Baby Care</td><td class="item-title">Wooden Baby Hair Brush Set for Newborns, Toddlers - Soft Goat Bristle Baby Brush and Comb Set Newborn Grooming Kit for Cradle Cap Care, Durable &amp; Gentle, Boy, Girl Infant Essentials (Regular, Walnut)</td><td>$17</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Safety 1st Nasal Aspirator, White, One Size Health &amp; Baby Care active 2026-07-05"><td>Health &amp; Baby Care</td><td class="item-title">Safety 1st Nasal Aspirator, White, One Size</td><td>$3</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="oogiebear Baby Nose Cleaner &amp; Ear Wax Removal Tool - Safe Booger &amp; Earwax Removal for Newborns, Infants, Toddlers - Dual-Ended - Essential Baby Stuff Health &amp; Baby Care active 2026-07-05"><td>Health &amp; Baby Care</td><td class="item-title">oogiebear Baby Nose Cleaner &amp; Ear Wax Removal Tool - Safe Booger &amp; Earwax Removal for Newborns, Infants, Toddlers - Dual-Ended - Essential Baby Stuff</td><td>$10</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Earth Mama Simply Non-Scents Baby Lotion for Dry Skin - Calendula Cream for Newborn Skin Care - 8 oz - Fragrance Free - Infant Essentials Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Earth Mama Simply Non-Scents Baby Lotion for Dry Skin - Calendula Cream for Newborn Skin Care - 8 oz - Fragrance Free - Infant Essentials</td><td>$15</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Frida Baby 3-in-1 Cool Mist Humidifier for Baby with Diffuser + Nightlight, Allergy Relief Baby Humidifier for Bedroom, Nursery + Large Rooms, Quiet, Auto Shut Off, Runs +24hrs Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Frida Baby 3-in-1 Cool Mist Humidifier for Baby with Diffuser + Nightlight, Allergy Relief Baby Humidifier for Bedroom, Nursery + Large Rooms, Quiet, Auto Shut Off, Runs +24hrs</td><td>$45</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="BIBS Color Pacifiers 4-Pack | BPA Free Soother Pacifier | Round Nipple | Natural Rubber Latex | Made in Europe | Size 0-6 Months | Deep Space Mix Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">BIBS Color Pacifiers 4-Pack | BPA Free Soother Pacifier | Round Nipple | Natural Rubber Latex | Made in Europe | Size 0-6 Months | Deep Space Mix</td><td>$30</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Philips Avent Soothie Baby Pacifiers - 100% Silicone Pacifiers for Babies 0-3 Months, One-piece Design, BPA-Free, Extra Durable, Green, 4 Pack, Model SCF190/41 Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Philips Avent Soothie Baby Pacifiers - 100% Silicone Pacifiers for Babies 0-3 Months, One-piece Design, BPA-Free, Extra Durable, Green, 4 Pack, Model SCF190/41</td><td>$12</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Momcozy Natural Baby Bottle, Wide-Neck, BPA Free Breast Milk Container, Storage Collection Bottle for Fridge &amp; Milk Cooler, Breastfeeding Essential, 11 oz, 4 pcs Nursing active 2026-07-05"><td>Nursing</td><td class="item-title">Momcozy Natural Baby Bottle, Wide-Neck, BPA Free Breast Milk Container, Storage Collection Bottle for Fridge &amp; Milk Cooler, Breastfeeding Essential, 11 oz, 4 pcs</td><td>$30</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Lansinoh Stay Dry Disposable Nursing Pads, Soft and Super Absorbent Breast Pads, Breastfeeding Essentials for Moms, 200 Count Nursing active 2026-07-05"><td>Nursing</td><td class="item-title">Lansinoh Stay Dry Disposable Nursing Pads, Soft and Super Absorbent Breast Pads, Breastfeeding Essentials for Moms, 200 Count</td><td>$21</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Momcozy Breastmilk Storing Bags, Temp-Sensing Discoloration Milk Storing Bags for Breastfeeding, Disposable Milk Storage Bag with 6 Ounce Self Standing, No-Leak Milk Freezer Storage Pouches, 200pcs Nursing active 2026-07-05"><td>Nursing</td><td class="item-title">Momcozy Breastmilk Storing Bags, Temp-Sensing Discoloration Milk Storing Bags for Breastfeeding, Disposable Milk Storage Bag with 6 Ounce Self Standing, No-Leak Milk Freezer Storage Pouches, 200pcs</td><td>$30</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="eufy Security Heated Wearable Breast Pump S1 Pro, Slim Hands-Free with Industry-Leading HeatFlow Tech, Wireless Charging Case, App-Controlled OptiRhythm, 300 mmHg Strong Suction, in-Bra Use Nursing active 2026-07-05"><td>Nursing</td><td class="item-title">eufy Security Heated Wearable Breast Pump S1 Pro, Slim Hands-Free with Industry-Leading HeatFlow Tech, Wireless Charging Case, App-Controlled OptiRhythm, 300 mmHg Strong Suction, in-Bra Use</td><td>$280</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="My Brest Friend Nursing Pillow - Deluxe - Enhanced Comfort w/Slipcover - Ergonomic Design for Ultimate Breastfeeding Support for Mom &amp; Baby - Adjustable Backrest and Handy Side Pocket, Soft Sand Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">My Brest Friend Nursing Pillow - Deluxe - Enhanced Comfort w/Slipcover - Ergonomic Design for Ultimate Breastfeeding Support for Mom &amp; Baby - Adjustable Backrest and Handy Side Pocket, Soft Sand</td><td>$53</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Pigeon Silicone Nipple (LL) with Latch-On Line, Natural Feel, 9+ Months, 4 Counts Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Pigeon Silicone Nipple (LL) with Latch-On Line, Natural Feel, 9+ Months, 4 Counts</td><td>$22</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Pigeon Silicone Nipple (L) with Latch-On Line, Natural Feel, 6+ Months, 4 Counts Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Pigeon Silicone Nipple (L) with Latch-On Line, Natural Feel, 6+ Months, 4 Counts</td><td>$22</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Medela Harmony Manual Breast Pump, Compact Swiss Design with PersonalFit Flex Shields and Medela&#x27;s 2-Phase Expression Technology Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Medela Harmony Manual Breast Pump, Compact Swiss Design with PersonalFit Flex Shields and Medela&#x27;s 2-Phase Expression Technology</td><td>$26</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Earth Mama Nipple Butter™ &amp; Diaper Balm | Nipple Cream &amp; Organic Skincare for Baby | Breastfeeding &amp; Postpartum Essentials Bundle Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Earth Mama Nipple Butter™ &amp; Diaper Balm | Nipple Cream &amp; Organic Skincare for Baby | Breastfeeding &amp; Postpartum Essentials Bundle</td><td>$28</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Lansinoh Breast Therapy Packs, Hot and Cold Breast-Pads with 2 Soft Covers, Postpartum Essentials for Nipple Pain Relief, Mastitis, Engorgement, Support for Breastfeeding, Pumping Aid, 2 Pack Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Lansinoh Breast Therapy Packs, Hot and Cold Breast-Pads with 2 Soft Covers, Postpartum Essentials for Nipple Pain Relief, Mastitis, Engorgement, Support for Breastfeeding, Pumping Aid, 2 Pack</td><td>$12</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Willow - Silver Nursing Cups, 2 Pack, Breastfeeding Nipple Covers for Protection &amp; BPA Free Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Willow - Silver Nursing Cups, 2 Pack, Breastfeeding Nipple Covers for Protection &amp; BPA Free</td><td>$42</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Medela Hydrogel Pads, Instant Pain Relief for Cracked or Sore Nipples from Breastfeeding and Pumping, Cooling Moisture Supports Natural Healing, Pack of 4 Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Medela Hydrogel Pads, Instant Pain Relief for Cracked or Sore Nipples from Breastfeeding and Pumping, Cooling Moisture Supports Natural Healing, Pack of 4</td><td>$9</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Pigeon Silicone Nipple (M) with Latch-On Line, Natural Feel, 3+ Months, 4 Counts Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Pigeon Silicone Nipple (M) with Latch-On Line, Natural Feel, 3+ Months, 4 Counts</td><td>$22</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Pigeon Silicone Nipple (S) with Latch-On Line, Natural Feel, 1+ Months, 4 Counts Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Pigeon Silicone Nipple (S) with Latch-On Line, Natural Feel, 1+ Months, 4 Counts</td><td>$22</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Pigeon Glass Nursing Bottle Wide Neck, Anti-Colic, Streamlined Body, Natural Feel, Easy to Clean, Heat-Resistant, 8.1 Oz (Pack of 2), Includes 2pcs M Nipples (3m+) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Pigeon Glass Nursing Bottle Wide Neck, Anti-Colic, Streamlined Body, Natural Feel, Easy to Clean, Heat-Resistant, 8.1 Oz (Pack of 2), Includes 2pcs M Nipples (3m+)</td><td>$36</td><td>2</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Pigeon Glass Nursing Bottle Wide Neck, Anti-Colic, Streamlined Body, Natural Feel, Easy to Clean, Heat-Resistant, 5.4 Oz (Pack of 2), Includes 2pcs SS Nipples (0m+) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Pigeon Glass Nursing Bottle Wide Neck, Anti-Colic, Streamlined Body, Natural Feel, Easy to Clean, Heat-Resistant, 5.4 Oz (Pack of 2), Includes 2pcs SS Nipples (0m+)</td><td>$35</td><td>2</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Chicco Fit360 ClearTex Rotating Convertible Car Seat with 360 Degree Rotation for Rear-Facing and Forward-Facing, LeverLock Self-Tensioning Lock System, Obsidian/Black Strollers &amp; Car Seats active 2026-07-05"><td>Strollers &amp; Car Seats</td><td class="item-title">Chicco Fit360 ClearTex Rotating Convertible Car Seat with 360 Degree Rotation for Rear-Facing and Forward-Facing, LeverLock Self-Tensioning Lock System, Obsidian/Black</td><td>$420</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Lamaze Clip On Car Seat and Stroller Toy - Freddie the Firefly - Includes Lady Bug Teether - High Contrast Sensory Crinkle Toys for Babies - Infant Travel Toys - Ages 0 Months and Up Strollers &amp; Car Seats active 2026-07-05"><td>Strollers &amp; Car Seats</td><td class="item-title">Lamaze Clip On Car Seat and Stroller Toy - Freddie the Firefly - Includes Lady Bug Teether - High Contrast Sensory Crinkle Toys for Babies - Infant Travel Toys - Ages 0 Months and Up</td><td>$15</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="MORROLS Car Seat Protector for Child, Baby, Pets -1 Pack car seat Cover with Thick Padding- Waterproof Universal Size with Mesh Pockets (Black) Strollers &amp; Car Seats active 2026-07-05"><td>Strollers &amp; Car Seats</td><td class="item-title">MORROLS Car Seat Protector for Child, Baby, Pets -1 Pack car seat Cover with Thick Padding- Waterproof Universal Size with Mesh Pockets (Black)</td><td>$15</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Meolsaek Car Seat Protector for Child Car Seat, Durable 600D Fabric Waterproof Car Seat Cover with Thick Pad Non-Slip Backing，No Imprints (Light Gray-1 pc) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Meolsaek Car Seat Protector for Child Car Seat, Durable 600D Fabric Waterproof Car Seat Cover with Thick Pad Non-Slip Backing，No Imprints (Light Gray-1 pc)</td><td>$28</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Momcozy 8000mAh Portable Stroller Fan, 27H Ultra-long Battery Life Detachable 4 Speed 360°Rotate LED Night Light with 2 Modes, USB Rechargeable Handheld Cooling Fan for Travel/Car Seat/Bedroom Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Momcozy 8000mAh Portable Stroller Fan, 27H Ultra-long Battery Life Detachable 4 Speed 360°Rotate LED Night Light with 2 Modes, USB Rechargeable Handheld Cooling Fan for Travel/Car Seat/Bedroom</td><td>$28</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Fisher-Price Baby’s First Blocks &amp; Rock-a-Stack Toy Set, Bucket of 10 Shapes &amp; Ring Stacking Activity for Developmental Play Ages 6+ Months (Amazon Exclusive) Toys &amp; Books active 2026-07-05"><td>Toys &amp; Books</td><td class="item-title">Fisher-Price Baby’s First Blocks &amp; Rock-a-Stack Toy Set, Bucket of 10 Shapes &amp; Ring Stacking Activity for Developmental Play Ages 6+ Months (Amazon Exclusive)</td><td>$18</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Toddlers Montessori Wooden Educational Toys for Baby Boys Girls Age 1 2 3 Year Old, Shape Sorting Toys 1st One First Birthday Girl Gifts for Kids 1-3, Wood Preschool Learning Fine Motor Skills Game Toys &amp; Books active 2026-07-05"><td>Toys &amp; Books</td><td class="item-title">Toddlers Montessori Wooden Educational Toys for Baby Boys Girls Age 1 2 3 Year Old, Shape Sorting Toys 1st One First Birthday Girl Gifts for Kids 1-3, Wood Preschool Learning Fine Motor Skills Game</td><td>$19</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Sassy Ring O Links 9 Piece Set, Links for Stroller or Carrier Seat, 0+ Months Toys &amp; Books active 2026-07-05"><td>Toys &amp; Books</td><td class="item-title">Sassy Ring O Links 9 Piece Set, Links for Stroller or Carrier Seat, 0+ Months</td><td>$6</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="iPlay, iLearn 10pcs Baby Rattles Toys Set, Infant Grab Shake Rattle, Easy Hold Sensory Teether, Babies Development Learning Music Toy, Newborn Shower Birthday Gift 1 2 3 4 5 6 7 9 10 12 Month Boy Girl Toys &amp; Books active 2026-07-05"><td>Toys &amp; Books</td><td class="item-title">iPlay, iLearn 10pcs Baby Rattles Toys Set, Infant Grab Shake Rattle, Easy Hold Sensory Teether, Babies Development Learning Music Toy, Newborn Shower Birthday Gift 1 2 3 4 5 6 7 9 10 12 Month Boy Girl</td><td>$23</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Let&#x27;s Count Soft Book - World of Eric Carle the Very Hungry Caterpillar Baby on the Go Clip Teething Crinkle Soft Sensory Book for Babies, 5.25x5.25 Inch Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Let&#x27;s Count Soft Book - World of Eric Carle the Very Hungry Caterpillar Baby on the Go Clip Teething Crinkle Soft Sensory Book for Babies, 5.25x5.25 Inch</td><td>$8</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Nuby NanaNubs Banana Silicone Infant Toothbrush - Gum Massager - Soft Bristles - Silicone - 3+ Months Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Nuby NanaNubs Banana Silicone Infant Toothbrush - Gum Massager - Soft Bristles - Silicone - 3+ Months</td><td>$5</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="mushie Pearl Teether Bracelet | 3-Pack (Clary Sage/Tuscany/Desert Sand) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">mushie Pearl Teether Bracelet | 3-Pack (Clary Sage/Tuscany/Desert Sand)</td><td>$13</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Socub Baby Teething Toys for 0-6 6-12 Months | BPA-Free Food-Grade Silicone &amp; Natural Beech Wood Teether Ring for Newborn Infants Teething Relief | Easy-Grip Sensory Rattle Toys(Baby Blue) Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Socub Baby Teething Toys for 0-6 6-12 Months | BPA-Free Food-Grade Silicone &amp; Natural Beech Wood Teether Ring for Newborn Infants Teething Relief | Easy-Grip Sensory Rattle Toys(Baby Blue)</td><td>$9</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Moonkie Stacks of Circles Soft Teething Toy | Educational Learning Baby Toy | Stacking Ring Toys for Babies Boy and Girl | 7 Piece Teethers Set Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Moonkie Stacks of Circles Soft Teething Toy | Educational Learning Baby Toy | Stacking Ring Toys for Babies Boy and Girl | 7 Piece Teethers Set</td><td>$12</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Exorany Busy Board Montessori Toys for Toddler Boys &amp; Girls Birthday Gifts, Sensory Toys for Toddlers, Educational Travel Preschool Toddler Activities Learning Fine Motor Skills Other active 2026-07-05"><td>Other</td><td class="item-title">Exorany Busy Board Montessori Toys for Toddler Boys &amp; Girls Birthday Gifts, Sensory Toys for Toddlers, Educational Travel Preschool Toddler Activities Learning Fine Motor Skills</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Melissa &amp; Doug K’s Kids, Flip Fish Stuffed Animal, Soft Baby Book, Multi-Textured Squeaking &amp; Crinkling Infant Sensory Toys for Babies with Baby Mirror, Tummy Time Toys for Infants Ages 0–9 Months Other active 2026-07-05"><td>Other</td><td class="item-title">Melissa &amp; Doug K’s Kids, Flip Fish Stuffed Animal, Soft Baby Book, Multi-Textured Squeaking &amp; Crinkling Infant Sensory Toys for Babies with Baby Mirror, Tummy Time Toys for Infants Ages 0–9 Months</td><td>$16</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Bright Starts Oball Easy-Grasp Rattle BPA-Free Infant Toy in Teal, Age Newborn and up, 4 Inches Other active 2026-07-05"><td>Other</td><td class="item-title">Bright Starts Oball Easy-Grasp Rattle BPA-Free Infant Toy in Teal, Age Newborn and up, 4 Inches</td><td>$6</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Breastmilk Cooler Bag - Large Capacity 12L &amp; 8-Hour Insulated Bottle Cooler Bag with Detachable Divider for Tall Baby Bottles | Dual Deck Lunch Box for Women | Breast Pump Bags for Work Other active 2026-07-05"><td>Other</td><td class="item-title">Breastmilk Cooler Bag - Large Capacity 12L &amp; 8-Hour Insulated Bottle Cooler Bag with Detachable Divider for Tall Baby Bottles | Dual Deck Lunch Box for Women | Breast Pump Bags for Work</td><td>$29</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Momcozy 22oz Portable Breast Milk Cooler for Outdoor, Life Saver with 360° Total Cooling for 24 Hours, Larger Capacity Travel Breastmilk Chiller with 2pcs Baby Bottles for Breastmilk Storage, Blue Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Momcozy 22oz Portable Breast Milk Cooler for Outdoor, Life Saver with 360° Total Cooling for 24 Hours, Larger Capacity Travel Breastmilk Chiller with 2pcs Baby Bottles for Breastmilk Storage, Blue</td><td>$90</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Momcozy Breastmilk Storage Bag, 8Oz, Temp-Sensing Color Change, 200 Count Milk Storage Bags Breastmilk with Pour Spout, Milk Bag with Self Standing for Breastfeeding, No Leak Presterilized for Freezer Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Momcozy Breastmilk Storage Bag, 8Oz, Temp-Sensing Color Change, 200 Count Milk Storage Bags Breastmilk with Pour Spout, Milk Bag with Self Standing for Breastfeeding, No Leak Presterilized for Freezer</td><td>$33</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Medela Easy Pour Breastmilk Storage Bags 200 Count 7oz/210ml Disposable, Leakproof, Fast Freeze, Breast Milk Protection Recyclable &amp; BPA Free Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">Medela Easy Pour Breastmilk Storage Bags 200 Count 7oz/210ml Disposable, Leakproof, Fast Freeze, Breast Milk Protection Recyclable &amp; BPA Free</td><td>$26</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="haakaa Petal Soft Silicone Milk Collector丨Discreet Leak-Protection Breast Milk Saver, Reusable Breast Shells Milk Collection Cup for Breastfeeding with Cleaning Brush- 2PCS Uncategorized active 2026-07-05"><td>Uncategorized</td><td class="item-title">haakaa Petal Soft Silicone Milk Collector丨Discreet Leak-Protection Breast Milk Saver, Reusable Breast Shells Milk Collection Cup for Breastfeeding with Cleaning Brush- 2PCS</td><td>$23</td><td>1</td><td>0</td><td>active</td><td>2026-07-05</td></tr><tr data-search="Yeeeasy Tummy Time Water Mat丨Inflatable Tummy Time Water Play Mat for Babies, Infants and Toddlers 3 to 24 Months Promote Development Toys Baby Toys Essentials and Gifts, Black and White Activity &amp; Gear active 2026-07-11"><td>Activity &amp; Gear</td><td class="item-title">Yeeeasy Tummy Time Water Mat丨Inflatable Tummy Time Water Play Mat for Babies, Infants and Toddlers 3 to 24 Months Promote Development Toys Baby Toys Essentials and Gifts, Black and White</td><td>$15</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="BabyBjörn Bouncer Bliss, Sand Gray, Woven, Classic Quilt | 2-in-1 Adjustable Baby Bouncer Seat and Toddler Chair, Newborn to Toddler (8-29 lbs), 4 Positions, Lightweight &amp; Portable Activity &amp; Gear active 2026-07-11"><td>Activity &amp; Gear</td><td class="item-title">BabyBjörn Bouncer Bliss, Sand Gray, Woven, Classic Quilt | 2-in-1 Adjustable Baby Bouncer Seat and Toddler Chair, Newborn to Toddler (8-29 lbs), 4 Positions, Lightweight &amp; Portable</td><td>$230</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="LOVEVERY | The Play Gym | Award Winning For Baby , Stage-Based Developmental Activity Gym &amp; Play Mat for Baby to Toddler Activity &amp; Gear active 2026-07-11"><td>Activity &amp; Gear</td><td class="item-title">LOVEVERY | The Play Gym | Award Winning For Baby , Stage-Based Developmental Activity Gym &amp; Play Mat for Baby to Toddler</td><td>$150</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Ergobaby Aura Baby Wrap Carrier for Newborn 0-12 Months (8-25 lbs) - Soft Stretchy Infant Wrap Carrier with Hip-Healthy Positioning, Pre-Tied Design - Grey Stripes Activity &amp; Gear active 2026-07-11"><td>Activity &amp; Gear</td><td class="item-title">Ergobaby Aura Baby Wrap Carrier for Newborn 0-12 Months (8-25 lbs) - Soft Stretchy Infant Wrap Carrier with Hip-Healthy Positioning, Pre-Tied Design - Grey Stripes</td><td>$59</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Ergobaby Omni Deluxe Baby Carrier for Newborn to Toddlers 0-48 Months (7-45 lbs) - 4-Position Natural Linen Baby Carrier with Ergonomic Support, Storage Pockets, and Sun Hood - Natural Linen Activity &amp; Gear active 2026-07-11"><td>Activity &amp; Gear</td><td class="item-title">Ergobaby Omni Deluxe Baby Carrier for Newborn to Toddlers 0-48 Months (7-45 lbs) - 4-Position Natural Linen Baby Carrier with Ergonomic Support, Storage Pockets, and Sun Hood - Natural Linen</td><td>$219</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Chicco Alfa Lite Lightweight Travel Playard, Portable Playpen for Babies and Toddlers, Snap-Open/Compact Fold Design, 13 lbs., Baby Travel Essential | Dove/Beige Activity &amp; Gear active 2026-07-11"><td>Activity &amp; Gear</td><td class="item-title">Chicco Alfa Lite Lightweight Travel Playard, Portable Playpen for Babies and Toddlers, Snap-Open/Compact Fold Design, 13 lbs., Baby Travel Essential | Dove/Beige</td><td>$190</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="MAMIMAKA Newborn Baby Short Sleeve Bodysuit Cotton One-Piece Baby Clothes 5-Pack, 0-12 Months Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">MAMIMAKA Newborn Baby Short Sleeve Bodysuit Cotton One-Piece Baby Clothes 5-Pack, 0-12 Months</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="MAMIMAKA Newborn Baby Short Sleeve Bodysuit Cotton One-Piece Baby Clothes 5-Pack, 0-12 Months Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">MAMIMAKA Newborn Baby Short Sleeve Bodysuit Cotton One-Piece Baby Clothes 5-Pack, 0-12 Months</td><td>$19</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Magnetic Me Cloudstretch 5-Pack Bundle | Magnetic Baby Bodysuits Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Magnetic Me Cloudstretch 5-Pack Bundle | Magnetic Baby Bodysuits</td><td>$76</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Little Me Baby Socks 16 Pairs | 61% Organic Cotton | Sizes 0-12M &amp; 12-24M | Seamless Toe &amp; Anti-Slip Gripper Sole Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Little Me Baby Socks 16 Pairs | 61% Organic Cotton | Sizes 0-12M &amp; 12-24M | Seamless Toe &amp; Anti-Slip Gripper Sole</td><td>$16</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="PurComfy Baby Hats and Mittens Set, Bamboo Viscose Cap and Mittens 12 Pieces, 0-6 Months Infant Newborn Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">PurComfy Baby Hats and Mittens Set, Bamboo Viscose Cap and Mittens 12 Pieces, 0-6 Months Infant Newborn</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Organic Cotton GOTS Certified Non-Slip Baby Socks 0-6 Months - 7 Pairs Soft Breathable Newborn Socks Animal Design For Infant Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Organic Cotton GOTS Certified Non-Slip Baby Socks 0-6 Months - 7 Pairs Soft Breathable Newborn Socks Animal Design For Infant</td><td>$12</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Butterblu Scout Sleep &amp; Play 100% Organic Cotton Footed Zip Front Sleeper Pajamas for Baby Boys, Girls, Unisex Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Butterblu Scout Sleep &amp; Play 100% Organic Cotton Footed Zip Front Sleeper Pajamas for Baby Boys, Girls, Unisex</td><td>$18</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Teach Leanbh Baby 2-Pack 100% Cotton Romper Jumpsuits Two Way Zipper Long Sleeve Footless Sleep and Play Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Teach Leanbh Baby 2-Pack 100% Cotton Romper Jumpsuits Two Way Zipper Long Sleeve Footless Sleep and Play</td><td>$31</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Burt&#x27;s Bees Baby Boys&#x27; Organic Cotton, Sleep and Play Footed Pajamas Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Burt&#x27;s Bees Baby Boys&#x27; Organic Cotton, Sleep and Play Footed Pajamas</td><td>$11</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="PATPAT Baby Pajama with Bamboo Viscose, Footie Jumpsuit Romper with 2-Way Zipper for Baby Boy Girl Toddler Sleeper Sleepwear Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">PATPAT Baby Pajama with Bamboo Viscose, Footie Jumpsuit Romper with 2-Way Zipper for Baby Boy Girl Toddler Sleeper Sleepwear</td><td>$17</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="PATPAT Baby Pajama with Bamboo Viscose, Footie Jumpsuit Romper with 2-Way Zipper for Baby Boy Girl Toddler Sleeper Sleepwear Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">PATPAT Baby Pajama with Bamboo Viscose, Footie Jumpsuit Romper with 2-Way Zipper for Baby Boy Girl Toddler Sleeper Sleepwear</td><td>$17</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Baby Sleepers 100% Cotton Footie Pajamas, Newborn 0-3 3-6 6-9 Months with 2-Way Zipper, 2pcs PJs Baby Boy Clothes Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Baby Sleepers 100% Cotton Footie Pajamas, Newborn 0-3 3-6 6-9 Months with 2-Way Zipper, 2pcs PJs Baby Boy Clothes</td><td>$15</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Baby Sleepers 100% Cotton Footie Pajamas, Newborn 0-3 3-6 6-9 Months with 2-Way Zipper, 2pcs PJs Baby Boy Clothes Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Baby Sleepers 100% Cotton Footie Pajamas, Newborn 0-3 3-6 6-9 Months with 2-Way Zipper, 2pcs PJs Baby Boy Clothes</td><td>$16</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Hanna Andersson Sleeper (Infant/Toddler) Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Hanna Andersson Sleeper (Infant/Toddler)</td><td>$30</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Burt&#x27;s Bees Baby Boys&#x27; Organic Cotton, Sleep and Play Footed Pajamas Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Burt&#x27;s Bees Baby Boys&#x27; Organic Cotton, Sleep and Play Footed Pajamas</td><td>$19</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Burt&#x27;s Bees Baby Boys&#x27; Organic Cotton, Sleep and Play Footed Pajamas Baby Clothing active 2026-07-11"><td>Baby Clothing</td><td class="item-title">Burt&#x27;s Bees Baby Boys&#x27; Organic Cotton, Sleep and Play Footed Pajamas</td><td>$19</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Momcozy Baby Towel with Hooded-Original Design Baby Towel Set -Soft &amp; Absorbent- Shower Gifts or Bath Essential for Infant, Newborn, Toddler, Marine Sea Whale Seal Waves Magic Bathing active 2026-07-11"><td>Bathing</td><td class="item-title">Momcozy Baby Towel with Hooded-Original Design Baby Towel Set -Soft &amp; Absorbent- Shower Gifts or Bath Essential for Infant, Newborn, Toddler, Marine Sea Whale Seal Waves Magic</td><td>$28</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Skip Hop Infant Bath Tub 3-Stage Grow With Baby Smart Sling MOBY Bathtub Grey Age 0+ Bathing active 2026-07-11"><td>Bathing</td><td class="item-title">Skip Hop Infant Bath Tub 3-Stage Grow With Baby Smart Sling MOBY Bathtub Grey Age 0+</td><td>$30</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Skip Hop MOBY Baby Bath Essentials Set Grey Bathing active 2026-07-11"><td>Bathing</td><td class="item-title">Skip Hop MOBY Baby Bath Essentials Set Grey</td><td>$38</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Dr. Talbot&#x27;s Diaper Cream Brush for Babies - Diaper Rash Cream Applicator with Suction Base and Hygienic Case - Mini Size - Aqua Blue Diapering active 2026-07-11"><td>Diapering</td><td class="item-title">Dr. Talbot&#x27;s Diaper Cream Brush for Babies - Diaper Rash Cream Applicator with Suction Base and Hygienic Case - Mini Size - Aqua Blue</td><td>$6</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="OXO Tot Perfect Pull Wipes Dispenser, Gray Diapering active 2026-07-11"><td>Diapering</td><td class="item-title">OXO Tot Perfect Pull Wipes Dispenser, Gray</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Diaper Caddy Organizer, Empty Gift Basket for Newborn Essentials, Baby Storage Basket, Stylish Gift Bag for Baby Shower, Boys and Girls - Large, White&amp;Beige Brown Diapering active 2026-07-11"><td>Diapering</td><td class="item-title">Diaper Caddy Organizer, Empty Gift Basket for Newborn Essentials, Baby Storage Basket, Stylish Gift Bag for Baby Shower, Boys and Girls - Large, White&amp;Beige Brown</td><td>$24</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="UPPAbaby Ciro High Chair/Sleek, Easy-to-Clean Design/Perfect-Fit Tray to Bring Baby to Table/Patent-Pending Harness/Dual-Position, 180-Degree Rotating Footrest/Caleb (Steel Blue/Rubberwood) Feeding active 2026-07-11"><td>Feeding</td><td class="item-title">UPPAbaby Ciro High Chair/Sleek, Easy-to-Clean Design/Perfect-Fit Tray to Bring Baby to Table/Patent-Pending Harness/Dual-Position, 180-Degree Rotating Footrest/Caleb (Steel Blue/Rubberwood)</td><td>$200</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="NUK 100% Silicone Comfy Orthodontic Pacifiers, 0-6 Months, Blue Fashion, Timeless Collection, 5 Count Health &amp; Baby Care active 2026-07-11"><td>Health &amp; Baby Care</td><td class="item-title">NUK 100% Silicone Comfy Orthodontic Pacifiers, 0-6 Months, Blue Fashion, Timeless Collection, 5 Count</td><td>$9</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="NUK Timeless Comfy Pacifier | 100% Silicone, One-Piece Design | BPA-Free, Gentle on Baby’s Skin | 5-Pack, for 6-18M Health &amp; Baby Care active 2026-07-11"><td>Health &amp; Baby Care</td><td class="item-title">NUK Timeless Comfy Pacifier | 100% Silicone, One-Piece Design | BPA-Free, Gentle on Baby’s Skin | 5-Pack, for 6-18M</td><td>$9</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="eufy Security Baby Monitor, Hybrid Wi-Fi and No Wi-Fi Connection, 24/7 Recording in app, Pan-Tilt, Portable Camera with Built-in Battery, ANR Health &amp; Baby Care active 2026-07-11"><td>Health &amp; Baby Care</td><td class="item-title">eufy Security Baby Monitor, Hybrid Wi-Fi and No Wi-Fi Connection, 24/7 Recording in app, Pan-Tilt, Portable Camera with Built-in Battery, ANR</td><td>$260</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Love to Dream Swaddle UP, Baby Sleep Sack,Self-Soothing Swaddles for Newborns, Improves Sleep,Secure Fit Calms Startle Reflex,New Born Essentials for Baby,1.0 TOG,Small 5-8.5 lbs,Chicken Run Olive Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">Love to Dream Swaddle UP, Baby Sleep Sack,Self-Soothing Swaddles for Newborns, Improves Sleep,Secure Fit Calms Startle Reflex,New Born Essentials for Baby,1.0 TOG,Small 5-8.5 lbs,Chicken Run Olive</td><td>$35</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Muslin Swaddle Blankets for Newborn, 3 Pack Breathable Soft Receiving Blanket, Large 38 x 40 inches Swaddle Wrap Burping Clothes Diapers, Essentials Infant Shower Items, Toddler Gift (Blue Dinosaur) Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">Muslin Swaddle Blankets for Newborn, 3 Pack Breathable Soft Receiving Blanket, Large 38 x 40 inches Swaddle Wrap Burping Clothes Diapers, Essentials Infant Shower Items, Toddler Gift (Blue Dinosaur)</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Miracle Blanket Swaddle Wrap – Help Your Newborn Sleep Longer – Soft &amp; Secure Sleep Sack for Infants – Easy-to-Use Swaddling Blanket for a Calm Baby (Forest Owls) Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">Miracle Blanket Swaddle Wrap – Help Your Newborn Sleep Longer – Soft &amp; Secure Sleep Sack for Infants – Easy-to-Use Swaddling Blanket for a Calm Baby (Forest Owls)</td><td>$30</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="KeaBabies 2-Pack Muslin Crib Sheets for Boys, Girls - 100% Organic Cotton Fitted Baby Crib Mattress Sheet, Soft Breathable Standard Toddler Bed Cover Bedding Set, Neutral, Durable 52x28 (Willow) Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">KeaBabies 2-Pack Muslin Crib Sheets for Boys, Girls - 100% Organic Cotton Fitted Baby Crib Mattress Sheet, Soft Breathable Standard Toddler Bed Cover Bedding Set, Neutral, Durable 52x28 (Willow)</td><td>$23</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="HALO Sleepsack Supersoft Wearable Blanket, Viscose Made from Bamboo, Sleeping Bag for Babies, 1.5 TOG, 6 – 12 Months, Medium, Calm Sage Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">HALO Sleepsack Supersoft Wearable Blanket, Viscose Made from Bamboo, Sleeping Bag for Babies, 1.5 TOG, 6 – 12 Months, Medium, Calm Sage</td><td>$45</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="KYTE BABY Sleep Bag 1.0 TOG, Rayon Made From Bamboo Wearable Blanket, Dual Zipper For Infants And Toddlers Nursery Essentials Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">KYTE BABY Sleep Bag 1.0 TOG, Rayon Made From Bamboo Wearable Blanket, Dual Zipper For Infants And Toddlers Nursery Essentials</td><td>$63</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Pro Goleem Lion Security Blanket, Soft Lovey Unisex Lovie Baby Gift for Newborn Boys and Girls Snuggle Toy Stuffed Animal 16 Inch Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">Pro Goleem Lion Security Blanket, Soft Lovey Unisex Lovie Baby Gift for Newborn Boys and Girls Snuggle Toy Stuffed Animal 16 Inch</td><td>$10</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="KeaBabies 2-Pack Muslin Crib Sheets for Boys, Girls - 100% Organic Cotton Fitted Baby Crib Mattress Sheet, Soft Breathable Standard Toddler Bed Cover Bedding Set, Neutral, Durable 52x28 (Woodland) Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">KeaBabies 2-Pack Muslin Crib Sheets for Boys, Girls - 100% Organic Cotton Fitted Baby Crib Mattress Sheet, Soft Breathable Standard Toddler Bed Cover Bedding Set, Neutral, Durable 52x28 (Woodland)</td><td>$22</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Hatch Baby Sleep Bundle: Home &amp; Travel Sound Machines | Expert Sleep Support | Registry Essential | Includes Hatch Baby and Portable Hatch Go (Putty) Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">Hatch Baby Sleep Bundle: Home &amp; Travel Sound Machines | Expert Sleep Support | Registry Essential | Includes Hatch Baby and Portable Hatch Go (Putty)</td><td>$110</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="MediAcous Night Light for Kids, Baby Egg Light for Nursery, 7 Colors Changing &amp; Stepless Dimming, Soft Silicone Touch Night Lamp with 1 Hour Timer, Rechargeable Nursery Night for Breastfeeding Nursery Bedding &amp; Essentials active 2026-07-11"><td>Nursery Bedding &amp; Essentials</td><td class="item-title">MediAcous Night Light for Kids, Baby Egg Light for Nursery, 7 Colors Changing &amp; Stepless Dimming, Soft Silicone Touch Night Lamp with 1 Hour Timer, Rechargeable Nursery Night for Breastfeeding</td><td>$25</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="HALO® BassiNest® Swivel Sleeper 4.0 Signature, Over-Bed Baby Bassinet with 360 Rotation, Breathable Mesh, Lowering Wall for Easy Access, Oat Nursery Furniture active 2026-07-11"><td>Nursery Furniture</td><td class="item-title">HALO® BassiNest® Swivel Sleeper 4.0 Signature, Over-Bed Baby Bassinet with 360 Rotation, Breathable Mesh, Lowering Wall for Easy Access, Oat</td><td>$280</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Crib Mobile Holder, HBM Wooden Mobile Arm &amp; Hanger for Crib, Nursery Decor for Baby Girl Boy Nursery Furniture active 2026-07-11"><td>Nursery Furniture</td><td class="item-title">Crib Mobile Holder, HBM Wooden Mobile Arm &amp; Hanger for Crib, Nursery Decor for Baby Girl Boy</td><td>$20</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Lullaby Earth Breathe Safe 2-Stage Breathable Crib Mattress - Chemical Free, Dual Firmness Natural Mattress with Removable Washable Protector - Packaging May Vary Nursery Furniture active 2026-07-11"><td>Nursery Furniture</td><td class="item-title">Lullaby Earth Breathe Safe 2-Stage Breathable Crib Mattress - Chemical Free, Dual Firmness Natural Mattress with Removable Washable Protector - Packaging May Vary</td><td>$239</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Blissful Diary Muslin Nursing Cover for Breastfeeding, Breathable Breastfeeding Cover up with Arch Neckline for Women, Nursing Apron (Dotted Cream) Nursing active 2026-07-11"><td>Nursing</td><td class="item-title">Blissful Diary Muslin Nursing Cover for Breastfeeding, Breathable Breastfeeding Cover up with Arch Neckline for Women, Nursing Apron (Dotted Cream)</td><td>$14</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Spiral Car Seat Baby Toys 0-6 Months, Infant Carseat High Contrast Sensory Toys Hanging Stroller Accessories, Newborn Shower Gifts for Baby Boys Essentials Stuff, Cute Black and White Cow Strollers &amp; Car Seats active 2026-07-11"><td>Strollers &amp; Car Seats</td><td class="item-title">Spiral Car Seat Baby Toys 0-6 Months, Infant Carseat High Contrast Sensory Toys Hanging Stroller Accessories, Newborn Shower Gifts for Baby Boys Essentials Stuff, Cute Black and White Cow</td><td>$16</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Car Seat Toys for Babies 0-6 Months Upgraded Version Spiral Car Seat &amp; Stroller Activity Toy, Soft Plush Hanging Toys with Rattles, Best Gift for Ages 0 and Up Strollers &amp; Car Seats active 2026-07-11"><td>Strollers &amp; Car Seats</td><td class="item-title">Car Seat Toys for Babies 0-6 Months Upgraded Version Spiral Car Seat &amp; Stroller Activity Toy, Soft Plush Hanging Toys with Rattles, Best Gift for Ages 0 and Up</td><td>$16</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Shynerk Baby Car Mirror, Rear Facing Car Seat Mirror Safety for Infant Newborn, Baby Mirror with Wide Rearview &amp; 360° Rotation, Shatterproof &amp; Easy Assembled Crash Tested Strollers &amp; Car Seats active 2026-07-11"><td>Strollers &amp; Car Seats</td><td class="item-title">Shynerk Baby Car Mirror, Rear Facing Car Seat Mirror Safety for Infant Newborn, Baby Mirror with Wide Rearview &amp; 360° Rotation, Shatterproof &amp; Easy Assembled Crash Tested</td><td>$14</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Infinno High Contrast Baby Toys Infant Rattle Socks and Wristband Set, Ideal Baby Sensery Toy Gifts for Newborn 0-12 Months, Perpect Black and White Toys for Boys and Girls As Baby Shower Gifts Toys &amp; Books active 2026-07-11"><td>Toys &amp; Books</td><td class="item-title">Infinno High Contrast Baby Toys Infant Rattle Socks and Wristband Set, Ideal Baby Sensery Toy Gifts for Newborn 0-12 Months, Perpect Black and White Toys for Boys and Girls As Baby Shower Gifts</td><td>$10</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="ZICOTO Decorative Wooden Bookshelf with Handle for Kids Rooms - Keeps Books Neatly Organized &amp; Within Reach for Toddlers - Easy Install Montessori Book Shelf for Baby&#x27;s Bedroom or Playroom Decor Toys &amp; Books active 2026-07-11"><td>Toys &amp; Books</td><td class="item-title">ZICOTO Decorative Wooden Bookshelf with Handle for Kids Rooms - Keeps Books Neatly Organized &amp; Within Reach for Toddlers - Easy Install Montessori Book Shelf for Baby&#x27;s Bedroom or Playroom Decor</td><td>$23</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Youuys Baby Tissue Box Toy for Babies 6-12 Months, Montessori Sensory Toys for 1 Year Old Boy, Infant Toy with Crinkle Tissues &amp; Fine Motor, for 6 9 12 18 Months Old Kids 1st Birthday Other active 2026-07-11"><td>Other</td><td class="item-title">Youuys Baby Tissue Box Toy for Babies 6-12 Months, Montessori Sensory Toys for 1 Year Old Boy, Infant Toy with Crinkle Tissues &amp; Fine Motor, for 6 9 12 18 Months Old Kids 1st Birthday</td><td>$17</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr><tr data-search="Babymoov Lovenest Organic Baby Infant Cushion, Pediatrician Designed Versatile, Comfortable, Machine-Washable Head and Neck Support (Made in Europe), Baby Registry Must Have Other active 2026-07-11"><td>Other</td><td class="item-title">Babymoov Lovenest Organic Baby Infant Cushion, Pediatrician Designed Versatile, Comfortable, Machine-Washable Head and Neck Support (Made in Europe), Baby Registry Must Have</td><td>$22</td><td>1</td><td>0</td><td>active</td><td>2026-07-11</td></tr></tbody></table><div class="empty-row">No registry rows match the search.</div></div></div>
+        <p class="notes">Registry rows show the reconciled item data without exposing the private registry URL or account identifiers.</p>
+      </section>
+      <section class="view-panel" id="gear-panel" role="tabpanel" aria-labelledby="gear-tab" hidden>
+        <div class="sheet"><div class="sheet-head"><h2>Baby gear price and safety table</h2><span class="muted" id="gear-count">19 rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Gear item</th><th>Mid-tier new</th><th>Used status</th><th>Safety note</th></tr></thead><tbody><tr data-search="Rear-facing infant car seat NHTSA/AAP advise against used car seats: cannot verify it was never in a crash, isn&#x27;t past its expiration date, or has no open recalls."><td class="item-title">Rear-facing infant car seat</td><td>$230</td><td><span class="status-text caution">new only</span></td><td>NHTSA/AAP advise against used car seats: cannot verify it was never in a crash, isn&#x27;t past its expiration date, or has no open recalls.</td></tr><tr data-search="Stroller (car-seat compatible) "><td class="item-title">Stroller (car-seat compatible)</td><td>$450</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Baby carrier / wrap "><td class="item-title">Baby carrier / wrap</td><td>$135</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Diaper bag "><td class="item-title">Diaper bag</td><td>$79</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Bassinet (early months) "><td class="item-title">Bassinet (early months)</td><td>$250</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Convertible crib Used crib: confirm it meets CURRENT CPSC crib standards (post-2011, no drop-sides), check it is not on a CPSC recall list, and ensure ALL original hardware and assembly instructions are included before use."><td class="item-title">Convertible crib</td><td>$300</td><td><span class="status-text safe">review</span></td><td>Used crib: confirm it meets CURRENT CPSC crib standards (post-2011, no drop-sides), check it is not on a CPSC recall list, and ensure ALL original hardware and assembly instructions are included before use.</td></tr><tr data-search="Crib mattress (firm, flat) Used crib mattress: must be FIRM (no sag/indentation), flat, clean and dry with no mold/stains, fit snugly with no gaps, and not be on a CPSC recall list per current safe-sleep standards."><td class="item-title">Crib mattress (firm, flat)</td><td>$100</td><td><span class="status-text safe">review</span></td><td>Used crib mattress: must be FIRM (no sag/indentation), flat, clean and dry with no mold/stains, fit snugly with no gaps, and not be on a CPSC recall list per current safe-sleep standards.</td></tr><tr data-search="Video baby monitor "><td class="item-title">Video baby monitor</td><td>$200</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Changing table / dresser-top station "><td class="item-title">Changing table / dresser-top station</td><td>$240</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Diaper pail "><td class="item-title">Diaper pail</td><td>$54</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Double electric breast pump FDA classifies OPEN-system pumps as single-user (cannot be fully sanitized between users). The S1 Plus is CLOSED-system so reuse is possible with a new personal accessory kit, but verify the unit is genuinely closed-system; insurance usually covers a brand-new pump."><td class="item-title">Double electric breast pump</td><td>$226</td><td><span class="status-text safe">review</span></td><td>FDA classifies OPEN-system pumps as single-user (cannot be fully sanitized between users). The S1 Plus is CLOSED-system so reuse is possible with a new personal accessory kit, but verify the unit is genuinely closed-system; insurance usually covers a brand-new pump.</td></tr><tr data-search="Nursing pillow "><td class="item-title">Nursing pillow</td><td>$40</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Bottle sterilizer "><td class="item-title">Bottle sterilizer</td><td>$80</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Bottle warmer "><td class="item-title">Bottle warmer</td><td>$49</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Baby bathtub "><td class="item-title">Baby bathtub</td><td>$40</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Baby swing / bouncer "><td class="item-title">Baby swing / bouncer</td><td>$210</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="White-noise machine "><td class="item-title">White-noise machine</td><td>$70</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Play mat / activity gym "><td class="item-title">Play mat / activity gym</td><td>$90</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr><tr data-search="Baby safety gate "><td class="item-title">Baby safety gate</td><td>$45</td><td><span class="status-text safe">review</span></td><td>No used-gear caution recorded.</td></tr></tbody></table><div class="empty-row">No gear rows match the search.</div></div></div>
+        <p class="notes">“New only” marks the existing safety caution from the Baby Prep tracker. It is not a recommendation to buy used.</p>
+      </section>
+    </div>
   </main>
   <script>
   (() => {
-    const tabs = [...document.querySelectorAll('.warm-tab')];
-    const panels = { stroller: document.getElementById('stroller-details-panel'), baby: document.getElementById('baby-details-panel') };
-    const select = (name) => {
-      tabs.forEach((tab) => { const active = tab.id === `${name}-tab`; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; });
-      Object.entries(panels).forEach(([key, panel]) => { panel.hidden = key !== name; });
+    const tabs = [...document.querySelectorAll('[role="tab"]')];
+    const names = ['stroller', 'registry', 'gear'];
+    const panels = Object.fromEntries(names.map((name) => [name, document.getElementById(`${name}-panel`)]));
+    let current = 0;
+    const search = document.getElementById('table-search');
+    const select = (index) => {
+      current = (index + names.length) % names.length;
+      tabs.forEach((tab, i) => { const active = i === current; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; panels[names[i]].hidden = !active; });
+      filter();
+    };
+    const filter = () => {
+      const query = search.value.trim().toLowerCase();
+      const panel = panels[names[current]];
+      const rows = [...panel.querySelectorAll('tbody tr')];
+      let visible = 0;
+      rows.forEach((row) => { const match = !query || row.dataset.search.toLowerCase().includes(query); row.hidden = !match; if (match) visible += 1; });
+      panel.querySelector('.empty-row').style.display = visible ? 'none' : 'block';
+      panel.querySelector('.sheet-head .muted').textContent = `${visible} of ${rows.length} rows`;
     };
     tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => select(tab.id.replace('-tab', '')));
-      tab.addEventListener('keydown', (event) => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length].focus(); } if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(tab.id.replace('-tab', '')); } });
+      tab.addEventListener('click', () => select(index));
+      tab.addEventListener('keydown', (event) => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length].focus(); } if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(index); } });
     });
-    select('stroller');
+    document.getElementById('previous-view').addEventListener('click', () => select(current - 1));
+    document.getElementById('next-view').addEventListener('click', () => select(current + 1));
+    search.addEventListener('input', filter);
+    select(0);
   })();
   </script>
-  <footer class="footer"><div class="wrap">Public-safe summary only. Confirm final price, seller, stock, taxes, fees, pickup, and delivery timing before buying.</div></footer>
+  <footer class="footer"><div class="grid-wrap">Public-safe table view. Confirm final price, seller, stock, taxes, fees, pickup, and delivery timing before buying.</div></footer>
 </body>
 </html>

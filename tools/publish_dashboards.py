@@ -21,6 +21,7 @@ which renders SVG; a mail client does not. The email path uses PNGs instead.
 
 import argparse
 import csv
+from html import escape
 import json
 import re
 import sys
@@ -432,6 +433,44 @@ def build_baby_stroller(baby_html):
     registry_value = f"{purchased}/{requested}" if requested else "--"
     safe_source = best_new.get("source_name") if best_new else "No verified new listing"
     worthy_source = lowest.get("source_name") if lowest else "No current lead"
+
+    def text(value, fallback="--"):
+        return escape(str(value if value not in (None, "") else fallback))
+
+    stroller_rows = []
+    for item in sorted(listings, key=lambda row: (float(row.get("price_usd")), row.get("source_name") or "")):
+        action = item.get("action_level") or item.get("availability") or "review"
+        stroller_rows.append(
+            f'<tr data-search="{text(" ".join(str(item.get(k, "")) for k in ("title", "source_name", "color", "availability", "action_level")))}">'
+            f'<td><strong>{money(item.get("price_usd"))}</strong></td>'
+            f'<td>{text(item.get("title"))}</td><td>{text(item.get("source_name"))}</td>'
+            f'<td>{text(item.get("color"))}</td><td>{text(item.get("availability"))}</td>'
+            f'<td><span class="status-text {"safe" if action == "ready_safe" else "verify"}">{text(action)}</span></td></tr>'
+        )
+
+    registry_rows = []
+    for item in registry_items:
+        price = item.get("amazon_price_usd")
+        registry_rows.append(
+            f'<tr data-search="{text(" ".join(str(item.get(k, "")) for k in ("title", "category_normalized", "status", "checked_at")))}">'
+            f'<td>{text(item.get("category_normalized"), "Uncategorized")}</td>'
+            f'<td class="item-title">{text(item.get("title"))}</td>'
+            f'<td>{money(price) if price is not None else "--"}</td>'
+            f'<td>{text(item.get("qty_requested"), "0")}</td><td>{text(item.get("qty_purchased"), "0")}</td>'
+            f'<td>{text(item.get("status"))}</td><td>{text(item.get("checked_at"))}</td></tr>'
+        )
+
+    gear_items = (read_json(BABY / "data" / "gear.json") or {}).get("price_items", [])
+    gear_rows = []
+    for item in gear_items:
+        caution = str(item.get("buy_used_caution", "")).lower() in {"avoid", "yes", "true"}
+        gear_rows.append(
+            f'<tr data-search="{text(" ".join(str(item.get(k, "")) for k in ("item", "caution_reason")))}">'
+            f'<td class="item-title">{text(item.get("item"))}</td><td>{money(item.get("mid_new_price_usd"))}</td>'
+            f'<td><span class="status-text {"caution" if caution else "safe"}">{"new only" if caution else "review"}</span></td>'
+            f'<td>{text(item.get("caution_reason"), "No used-gear caution recorded.")}</td></tr>'
+        )
+
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -440,110 +479,119 @@ def build_baby_stroller(baby_html):
   <title>Baby + Stroller Dashboard - Public Safe</title>
   <link rel="stylesheet" href="../styles.css">
   <style>
-    :root {{ color-scheme: light; --warm-ivory: #f8f5ef; --warm-paper: #fffdf9; --warm-ink: #292723; --warm-muted: #756f66; --warm-line: #e4ddd1; --warm-sand: #d6c0a6; --warm-olive: #60705b; --warm-rose: #a66e5d; }}
-    body.warm-combined {{ background: var(--warm-ivory); color: var(--warm-ink); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
-    .warm-combined .warm-hero {{ padding: 72px 0 46px; background: var(--warm-ivory); border-bottom: 1px solid var(--warm-line); }}
-    .warm-combined .warm-hero .wrap {{ max-width: 980px; }}
-    .warm-combined .warm-kicker {{ color: var(--warm-rose); font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }}
-    .warm-combined h1 {{ max-width: 760px; margin: 18px 0 18px; font-size: clamp(2.8rem, 7vw, 6.8rem); line-height: .94; letter-spacing: -.07em; font-weight: 650; }}
-    .warm-combined .warm-lead {{ max-width: 650px; color: var(--warm-muted); font-size: 1.08rem; }}
-    .warm-combined .warm-meta {{ color: var(--warm-muted); font-size: .84rem; }}
-    .warm-summary {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 46px 0 0; border-top: 1px solid var(--warm-line); border-bottom: 1px solid var(--warm-line); background: var(--warm-line); }}
-    .warm-metric {{ min-height: 150px; padding: 25px 22px; background: var(--warm-paper); }}
-    .warm-metric strong {{ display: block; margin: 8px 0 4px; font-size: clamp(2rem, 4vw, 3.6rem); font-weight: 620; letter-spacing: -.05em; }}
-    .warm-metric small {{ color: var(--warm-muted); }}
-    .warm-combined main {{ background: var(--warm-ivory); }}
-    .warm-combined .warm-section {{ padding: 52px 0 16px; }}
-    .warm-combined .warm-section .wrap {{ max-width: 980px; }}
-    .warm-combined h2 {{ font-size: clamp(1.7rem, 3vw, 2.65rem); letter-spacing: -.04em; font-weight: 620; }}
-    .warm-combined .warm-switch {{ display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }}
-    .warm-tabs {{ display: inline-flex; padding: 4px; border: 1px solid var(--warm-line); border-radius: 999px; background: #eee8de; }}
-    .warm-tab {{ min-height: 42px; padding: 9px 18px; border: 0; border-radius: 999px; background: transparent; color: var(--warm-muted); font: inherit; font-weight: 750; cursor: pointer; }}
-    .warm-tab[aria-selected="true"] {{ background: var(--warm-paper); color: var(--warm-ink); box-shadow: 0 2px 7px rgba(76, 61, 42, .12); }}
-    .warm-tab:focus-visible {{ outline: 3px solid var(--warm-sand); outline-offset: 3px; }}
-    .warm-combined .warm-switch-help {{ max-width: 420px; margin-bottom: 0; color: var(--warm-muted); text-align: right; }}
-    .warm-combined .worth-grid {{ display: grid; gap: 0; border-top: 1px solid var(--warm-line); }}
-    .warm-combined .worth-row {{ display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--warm-line); }}
-    .warm-combined .worth-price {{ font-size: 1.8rem; font-weight: 650; letter-spacing: -.04em; }}
-    .warm-combined .worth-title {{ margin: 0 0 4px; font-size: 1.06rem; font-weight: 750; }}
-    .warm-combined .worth-copy {{ margin: 0; color: var(--warm-muted); font-size: .9rem; }}
-    .warm-combined .warm-badge {{ display: inline-flex; width: fit-content; padding: 5px 9px; border-radius: 999px; background: #e4ebdf; color: #53644e; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }}
-    .warm-combined .warm-badge.verify {{ background: #f1e4dc; color: #8b584a; }}
-    .warm-combined .warm-detail-panel[hidden] {{ display: none; }}
-    .warm-combined .warm-detail-panel > .section:first-child {{ padding-top: 28px; }}
-    .warm-combined .button {{ border-color: var(--warm-line); background: var(--warm-paper); color: var(--warm-ink); border-radius: 999px; }}
-    .warm-combined .button.primary {{ border-color: var(--warm-olive); background: var(--warm-olive); color: #fff; }}
-    .warm-combined .section, .warm-combined .hero {{ background: transparent; }}
-    .warm-combined .deal-card, .warm-combined .panel, .warm-combined .search-card, .warm-combined .card {{ border-color: var(--warm-line); border-radius: 4px; background: var(--warm-paper); box-shadow: none; }}
-    .warm-combined .metric {{ border-color: var(--warm-line); border-radius: 4px; background: var(--warm-paper); color: var(--warm-ink); box-shadow: none; }}
-    .warm-combined .metric .meta, .warm-combined .metric strong {{ color: var(--warm-ink); }}
-    .warm-combined .bar-track {{ background: #ece5da; }}
-    .warm-combined .bar-fill {{ background: var(--warm-olive); }}
-    .warm-combined .bar-fill.amber {{ background: var(--warm-rose); }}
-    .warm-combined .table-wrap {{ max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }}
-    .warm-combined .price-table {{ min-width: 980px; }}
-    .warm-combined .footer {{ border-top: 1px solid var(--warm-line); background: var(--warm-paper); color: var(--warm-muted); }}
-    @media (max-width: 680px) {{
-      .warm-combined .warm-hero {{ padding-top: 44px; }}
-      .warm-summary {{ grid-template-columns: 1fr; }}
-      .warm-combined .warm-switch {{ display: block; }}
-      .warm-combined .warm-switch-help {{ margin-top: 18px; text-align: left; }}
-      .warm-tabs {{ width: 100%; }}
-      .warm-tab {{ flex: 1; }}
-      .warm-combined .worth-row {{ grid-template-columns: 72px minmax(0, 1fr); gap: 12px; }}
-      .warm-combined .worth-row .button {{ grid-column: 2; width: fit-content; }}
+    :root {{ color-scheme: light; --grid-bg: #f4f6f8; --grid-paper: #fff; --grid-ink: #20252b; --grid-muted: #65707b; --grid-line: #cbd3dc; --grid-blue: #dcecff; --grid-green: #e6f3e8; --grid-amber: #fff3d8; }}
+    body.grid-dashboard {{ margin: 0; background: var(--grid-bg); color: var(--grid-ink); font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
+    .grid-dashboard .grid-wrap {{ width: min(1240px, calc(100% - 28px)); margin: 0 auto; }}
+    .grid-dashboard .grid-header {{ padding: 28px 0 20px; background: var(--grid-paper); border-bottom: 1px solid var(--grid-line); }}
+    .grid-dashboard h1 {{ margin: 0 0 4px; font-size: clamp(1.65rem, 3vw, 2.5rem); letter-spacing: -.04em; }}
+    .grid-dashboard h2 {{ margin: 0; font-size: 1.25rem; }}
+    .grid-dashboard .subhead, .grid-dashboard .muted {{ color: var(--grid-muted); }}
+    .grid-dashboard .subhead {{ margin: 0; }}
+    .grid-dashboard .summary-grid {{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 20px; border: 1px solid var(--grid-line); }}
+    .grid-dashboard .summary-cell {{ padding: 12px 14px; background: var(--grid-paper); border-right: 1px solid var(--grid-line); }}
+    .grid-dashboard .summary-cell:last-child {{ border-right: 0; }}
+    .grid-dashboard .summary-label {{ display: block; color: var(--grid-muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }}
+    .grid-dashboard .summary-value {{ display: block; margin-top: 4px; font-size: 1.35rem; font-weight: 700; }}
+    .grid-dashboard .toolbar {{ position: sticky; top: 0; z-index: 2; padding: 12px 0; background: rgba(244,246,248,.96); border-bottom: 1px solid var(--grid-line); }}
+    .grid-dashboard .toolbar-row {{ display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }}
+    .grid-dashboard button, .grid-dashboard input {{ min-height: 36px; border: 1px solid var(--grid-line); border-radius: 3px; font: inherit; }}
+    .grid-dashboard button {{ padding: 7px 12px; background: var(--grid-paper); color: var(--grid-ink); cursor: pointer; }}
+    .grid-dashboard button[aria-selected="true"], .grid-dashboard button.primary {{ background: #245b8f; border-color: #245b8f; color: #fff; }}
+    .grid-dashboard button:focus-visible, .grid-dashboard input:focus-visible {{ outline: 3px solid #8bb9e7; outline-offset: 1px; }}
+    .grid-dashboard input {{ flex: 1 1 260px; padding: 7px 10px; background: var(--grid-paper); }}
+    .grid-dashboard .view-panel[hidden] {{ display: none; }}
+    .grid-dashboard .sheet {{ margin: 18px 0 34px; background: var(--grid-paper); border: 1px solid var(--grid-line); }}
+    .grid-dashboard .sheet-head {{ display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px; border-bottom: 1px solid var(--grid-line); }}
+    .grid-dashboard .sheet-scroll {{ overflow-x: auto; }}
+    .grid-dashboard table {{ width: 100%; border-collapse: collapse; text-align: left; }}
+    .grid-dashboard th {{ position: sticky; top: 61px; z-index: 1; background: #e9eef3; color: #37424e; font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }}
+    .grid-dashboard th, .grid-dashboard td {{ padding: 9px 10px; border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line); vertical-align: top; }}
+    .grid-dashboard tr:nth-child(even) td {{ background: #fafbfd; }}
+    .grid-dashboard th:last-child, .grid-dashboard td:last-child {{ border-right: 0; }}
+    .grid-dashboard .item-title {{ min-width: 360px; }}
+    .grid-dashboard .status-text {{ display: inline-block; padding: 2px 6px; border-radius: 2px; font-size: .75rem; font-weight: 700; }}
+    .grid-dashboard .status-text.safe {{ background: var(--grid-green); color: #275e32; }}
+    .grid-dashboard .status-text.verify {{ background: var(--grid-blue); color: #1d4e79; }}
+    .grid-dashboard .status-text.caution {{ background: var(--grid-amber); color: #805a16; }}
+    .grid-dashboard .empty-row {{ display: none; padding: 16px; color: var(--grid-muted); }}
+    .grid-dashboard .notes {{ margin: 0 0 34px; color: var(--grid-muted); }}
+    @media (max-width: 720px) {{
+      .grid-dashboard .summary-grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+      .grid-dashboard .summary-cell:nth-child(2) {{ border-right: 0; }}
+      .grid-dashboard .summary-cell:nth-child(-n+2) {{ border-bottom: 1px solid var(--grid-line); }}
+      .grid-dashboard .toolbar-row {{ align-items: stretch; }}
+      .grid-dashboard .toolbar-row button {{ flex: 1 1 auto; }}
+      .grid-dashboard input {{ flex-basis: 100%; }}
     }}
   </style>
 </head>
-<body class="warm-combined">
-  <header class="warm-hero">
-    <div class="wrap">
-      <p class="warm-kicker">Baby gear · stroller · {refreshed}</p>
-      <h1>One calm view of what’s next.</h1>
-      <p class="warm-lead">A shared buying view for Luke and Julie. Start with the clearest safe choice, then open only the detail layer you need.</p>
-      <div class="warm-summary" aria-label="Dashboard summary">
-        <div class="warm-metric"><span class="warm-kicker">Best new stroller price</span><strong>{safe_price}</strong><small>{safe_source} · new and ready to verify at checkout</small></div>
-        <div class="warm-metric"><span class="warm-kicker">Registry verified</span><strong>{registry_value}</strong><small>Our baby list · shared with Luke + Julie</small></div>
-      </div>
+<body class="grid-dashboard">
+  <header class="grid-header"><div class="grid-wrap">
+    <h1>Baby + Stroller Dashboard</h1>
+    <p class="subhead">Luke + Julie · refreshed {refreshed} · spreadsheet view of stroller leads, registry items, and baby gear safety notes</p>
+    <div class="summary-grid" aria-label="Dashboard summary">
+      <div class="summary-cell"><span class="summary-label">Best new stroller</span><span class="summary-value">{safe_price}</span><span class="muted">{text(safe_source)}</span></div>
+      <div class="summary-cell"><span class="summary-label">Best verify-first lead</span><span class="summary-value">{worthy_price}</span><span class="muted">{text(worthy_source)}</span></div>
+      <div class="summary-cell"><span class="summary-label">Registry rows</span><span class="summary-value">{len(registry_items)}</span><span class="muted">{registry_value} requested quantity</span></div>
+      <div class="summary-cell"><span class="summary-label">Gear rows</span><span class="summary-value">{len(gear_items)}</span><span class="muted">safety flags included</span></div>
     </div>
-  </header>
+  </div></header>
   <main>
-    <section class="warm-section" aria-labelledby="decision-title">
-      <div class="wrap">
-        <div class="warm-switch">
-          <div><p class="warm-kicker">Your next decision</p><h2 id="decision-title">Worth looking at</h2><p class="warm-meta">The $650 lead is verify-first. The {safe_price} new option is the clean fallback.</p></div>
-          <p class="warm-switch-help">{worthy_source} is a message-before-buy lead. Keep the new option in view if safety proof or timing matters more than savings.</p>
-        </div>
-        <div class="worth-grid">
-          <div class="worth-row"><div class="worth-price">{worthy_price}</div><div><p class="warm-badge verify">Verify first</p><p class="worth-title">Exact-system lead with savings</p><p class="worth-copy">Message the seller and confirm crash history, labels, expiry, recalls, parts, inserts, manual, and clear photos.</p></div><a class="button" href="#stroller-details-panel">See stroller detail</a></div>
-          <div class="worth-row"><div class="worth-price">{safe_price}</div><div><p class="warm-badge">Safe fallback</p><p class="worth-title">New, preferred Granite option</p><p class="worth-copy">Use {safe_source} as the clean buy-now path if the resale lead cannot prove the car-seat checklist.</p></div><a class="button primary" href="#stroller-details-panel">Open safe path</a></div>
-        </div>
-      </div>
-    </section>
-    <section class="warm-section" aria-labelledby="details-title">
-      <div class="wrap">
-        <div class="warm-switch"><div><p class="warm-kicker">Go deeper when you need to</p><h2 id="details-title">Details</h2></div><div class="warm-tabs" role="tablist" aria-label="Dashboard details"><button class="warm-tab" id="stroller-tab" type="button" role="tab" aria-selected="true" aria-controls="stroller-details-panel">Stroller</button><button class="warm-tab" id="baby-tab" type="button" role="tab" aria-selected="false" aria-controls="baby-details-panel">Baby gear</button></div></div>
-      </div>
-    </section>
-    <section class="warm-detail-panel" id="stroller-details-panel" role="tabpanel" aria-labelledby="stroller-tab">{stroller_panel}</section>
-    <section class="warm-detail-panel" id="baby-details-panel" role="tabpanel" aria-labelledby="baby-tab" hidden>{baby_panel}</section>
+    <section class="toolbar"><div class="grid-wrap"><div class="toolbar-row" role="tablist" aria-label="Dashboard sheets">
+      <button id="stroller-tab" type="button" role="tab" aria-selected="true" aria-controls="stroller-panel">Stroller deals</button>
+      <button id="registry-tab" type="button" role="tab" aria-selected="false" aria-controls="registry-panel">Baby registry</button>
+      <button id="gear-tab" type="button" role="tab" aria-selected="false" aria-controls="gear-panel">Gear safety</button>
+      <button id="previous-view" type="button" aria-label="Previous sheet">‹ Previous</button>
+      <button id="next-view" type="button" aria-label="Next sheet">Next ›</button>
+      <input id="table-search" type="search" placeholder="Search the current sheet…" aria-label="Search the current sheet">
+    </div></div></section>
+    <div class="grid-wrap">
+      <section class="view-panel" id="stroller-panel" role="tabpanel" aria-labelledby="stroller-tab">
+        <div class="sheet"><div class="sheet-head"><h2>Stroller leads</h2><span class="muted" id="stroller-count">{len(stroller_rows)} rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Price</th><th>Listing</th><th>Source</th><th>Color</th><th>Availability</th><th>Action</th></tr></thead><tbody>{"".join(stroller_rows)}</tbody></table><div class="empty-row">No stroller rows match the search.</div></div></div>
+        <p class="notes">Safety rule: used infant car-seat bundles remain verify-first until crash history, labels, expiration, recalls, original parts, inserts, manual, and clear photos are proven. New/authorized retail is the clean fallback at {safe_price}.</p>
+      </section>
+      <section class="view-panel" id="registry-panel" role="tabpanel" aria-labelledby="registry-tab" hidden>
+        <div class="sheet"><div class="sheet-head"><h2>Baby registry — all reconciled rows</h2><span class="muted" id="registry-count">{len(registry_rows)} rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Category</th><th>Registry item</th><th>Amazon price</th><th>Qty requested</th><th>Qty purchased</th><th>Status</th><th>Checked</th></tr></thead><tbody>{"".join(registry_rows)}</tbody></table><div class="empty-row">No registry rows match the search.</div></div></div>
+        <p class="notes">Registry rows show the reconciled item data without exposing the private registry URL or account identifiers.</p>
+      </section>
+      <section class="view-panel" id="gear-panel" role="tabpanel" aria-labelledby="gear-tab" hidden>
+        <div class="sheet"><div class="sheet-head"><h2>Baby gear price and safety table</h2><span class="muted" id="gear-count">{len(gear_rows)} rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Gear item</th><th>Mid-tier new</th><th>Used status</th><th>Safety note</th></tr></thead><tbody>{"".join(gear_rows)}</tbody></table><div class="empty-row">No gear rows match the search.</div></div></div>
+        <p class="notes">“New only” marks the existing safety caution from the Baby Prep tracker. It is not a recommendation to buy used.</p>
+      </section>
+    </div>
   </main>
   <script>
   (() => {{
-    const tabs = [...document.querySelectorAll('.warm-tab')];
-    const panels = {{ stroller: document.getElementById('stroller-details-panel'), baby: document.getElementById('baby-details-panel') }};
-    const select = (name) => {{
-      tabs.forEach((tab) => {{ const active = tab.id === `${{name}}-tab`; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; }});
-      Object.entries(panels).forEach(([key, panel]) => {{ panel.hidden = key !== name; }});
+    const tabs = [...document.querySelectorAll('[role="tab"]')];
+    const names = ['stroller', 'registry', 'gear'];
+    const panels = Object.fromEntries(names.map((name) => [name, document.getElementById(`${{name}}-panel`)]));
+    let current = 0;
+    const search = document.getElementById('table-search');
+    const select = (index) => {{
+      current = (index + names.length) % names.length;
+      tabs.forEach((tab, i) => {{ const active = i === current; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; panels[names[i]].hidden = !active; }});
+      filter();
+    }};
+    const filter = () => {{
+      const query = search.value.trim().toLowerCase();
+      const panel = panels[names[current]];
+      const rows = [...panel.querySelectorAll('tbody tr')];
+      let visible = 0;
+      rows.forEach((row) => {{ const match = !query || row.dataset.search.toLowerCase().includes(query); row.hidden = !match; if (match) visible += 1; }});
+      panel.querySelector('.empty-row').style.display = visible ? 'none' : 'block';
+      panel.querySelector('.sheet-head .muted').textContent = `${{visible}} of ${{rows.length}} rows`;
     }};
     tabs.forEach((tab, index) => {{
-      tab.addEventListener('click', () => select(tab.id.replace('-tab', '')));
-      tab.addEventListener('keydown', (event) => {{ if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {{ event.preventDefault(); tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length].focus(); }} if (event.key === 'Enter' || event.key === ' ') {{ event.preventDefault(); select(tab.id.replace('-tab', '')); }} }});
+      tab.addEventListener('click', () => select(index));
+      tab.addEventListener('keydown', (event) => {{ if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {{ event.preventDefault(); tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length].focus(); }} if (event.key === 'Enter' || event.key === ' ') {{ event.preventDefault(); select(index); }} }});
     }});
-    select('stroller');
+    document.getElementById('previous-view').addEventListener('click', () => select(current - 1));
+    document.getElementById('next-view').addEventListener('click', () => select(current + 1));
+    search.addEventListener('input', filter);
+    select(0);
   }})();
   </script>
-  <footer class="footer"><div class="wrap">Public-safe summary only. Confirm final price, seller, stock, taxes, fees, pickup, and delivery timing before buying.</div></footer>
+  <footer class="footer"><div class="grid-wrap">Public-safe table view. Confirm final price, seller, stock, taxes, fees, pickup, and delivery timing before buying.</div></footer>
 </body>
 </html>
 """
@@ -627,7 +675,7 @@ def build_index(ford, washer, baby, stroller_price="$600"):
             <h2>Message seller before treating it as safe</h2>
             <p class="meta">The price is under target, but the infant seat requires complete crash, expiry, label, recall, and insert verification.</p>
             <div class="sub-links">
-              <a href="dashboards/baby-stroller.html#stroller-details-panel">Price ladder</a>
+              <a href="dashboards/baby-stroller.html#stroller-panel">Price ladder</a>
               <a href="dashboards/baby-stroller.html">Safe-buy options</a>
               <a href="dashboards/baby-stroller.html">Safety checklist</a>
             </div>

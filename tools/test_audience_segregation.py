@@ -38,9 +38,10 @@ class AudienceSegregationTests(unittest.TestCase):
         text = COMBINED.read_text(encoding="utf-8")
         self.assertIn('role="tablist"', text)
         self.assertGreaterEqual(text.count('role="tab"'), 2)
-        self.assertIn("Best new stroller price", text)
-        self.assertIn('id="stroller-details-panel"', text)
-        self.assertIn('id="baby-details-panel"', text)
+        self.assertIn("Best new stroller", text)
+        self.assertIn('id="stroller-panel"', text)
+        self.assertIn('id="registry-panel"', text)
+        self.assertIn('id="gear-panel"', text)
         self.assertNotIn("@next-decade.com", text.lower())
 
     def test_public_safe_runtime_has_no_devin_surface_links(self):

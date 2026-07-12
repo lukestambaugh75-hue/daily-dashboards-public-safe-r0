@@ -11,29 +11,33 @@ class WarmDashboardContractTests(unittest.TestCase):
     def setUpClass(cls):
         cls.text = COMBINED.read_text(encoding="utf-8")
 
-    def test_warm_decision_layer_is_present(self):
-        self.assertIn("One calm view of what’s next.", self.text)
-        self.assertIn("Worth looking at", self.text)
-        self.assertIn("Our baby list · shared with Luke + Julie", self.text)
-        self.assertIn('class="warm-combined"', self.text)
+    def test_spreadsheet_dashboard_has_all_three_sheets(self):
+        self.assertIn("Stroller deals", self.text)
+        self.assertIn("Baby registry", self.text)
+        self.assertIn("Gear safety", self.text)
+        self.assertIn('id="registry-panel"', self.text)
+        self.assertIn('id="gear-panel"', self.text)
 
     def test_price_and_registry_metrics_are_visible(self):
-        self.assertIn("Best new stroller price", self.text)
-        self.assertIn("Registry verified", self.text)
-        self.assertIn('class="warm-metric"', self.text)
+        self.assertIn("Best new stroller", self.text)
+        self.assertIn("Registry rows", self.text)
+        self.assertIn("all reconciled rows", self.text)
+        self.assertIn("Qty requested", self.text)
+        self.assertIn("Qty purchased", self.text)
 
-    def test_detail_switch_is_semantic_and_not_cycle_only(self):
+    def test_detail_switch_and_search_are_present(self):
         self.assertIn('role="tablist"', self.text)
-        self.assertGreaterEqual(self.text.count('role="tab"'), 2)
+        self.assertGreaterEqual(self.text.count('role="tab"'), 3)
         self.assertIn('aria-selected="true"', self.text)
-        self.assertIn("Stroller", self.text)
-        self.assertIn("Baby gear", self.text)
-        self.assertNotIn("Cycle details", self.text)
+        self.assertIn('id="previous-view"', self.text)
+        self.assertIn('id="next-view"', self.text)
+        self.assertIn('id="table-search"', self.text)
+        self.assertIn("row.dataset.search", self.text)
 
-    def test_warm_surface_has_no_old_dark_combined_controls(self):
-        self.assertNotIn("combined-price", self.text)
-        self.assertNotIn("combined-switch", self.text)
-        self.assertNotIn("#111214", self.text)
+    def test_old_frothy_surface_is_removed(self):
+        self.assertNotIn("One calm view of what’s next.", self.text)
+        self.assertNotIn("warm-combined", self.text)
+        self.assertNotIn("Cycle details", self.text)
 
 
 if __name__ == "__main__":
