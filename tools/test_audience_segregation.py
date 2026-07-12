@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
+COMBINED = ROOT / "dashboards" / "baby-stroller.html"
 RUNTIME_FILES = [
     ROOT / "index.html",
     ROOT / "styles.css",
@@ -32,6 +33,15 @@ class RuntimeLinkParser(HTMLParser):
 
 
 class AudienceSegregationTests(unittest.TestCase):
+    def test_combined_baby_stroller_dashboard_is_the_single_shareable_surface(self):
+        self.assertTrue(COMBINED.exists())
+        text = COMBINED.read_text(encoding="utf-8")
+        self.assertIn("Cycle details", text)
+        self.assertIn("Best new stroller price", text)
+        self.assertIn('id="stroller-details-panel"', text)
+        self.assertIn('id="baby-details-panel"', text)
+        self.assertNotIn("@next-decade.com", text.lower())
+
     def test_public_safe_runtime_has_no_devin_surface_links(self):
         for path in RUNTIME_FILES:
             text = path.read_text(encoding="utf-8").lower()
@@ -44,7 +54,7 @@ class AudienceSegregationTests(unittest.TestCase):
 
         self.assertIn('href="dashboards/ford.html"', text)
         self.assertIn('href="dashboards/washer.html"', text)
-        self.assertIn('href="dashboards/stroller.html"', text)
+        self.assertIn('href="dashboards/baby-stroller.html"', text)
         self.assertIn("Raptor public-safe lead", text)
         self.assertIn("Washer checkout gate", text)
         self.assertIn("Nuna stroller price board", text)

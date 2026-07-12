@@ -37,8 +37,8 @@ asset, redirect, or source path from this hub.
 - Main dashboard: top 3 public-safe quality-and-price picks.
 - Washer Deal Tracker: sanitized decision and checkout-status view.
 - Ford public-safe snapshot: sanitized market-summary view.
-- Baby Gear Tracker: sanitized budget and category-summary view.
-- Nuna Stroller Tracker: Julie-safe price and safety-decision view.
+- Baby + Stroller Dashboard: one shared Luke/Julie-safe price, registry, and safety view at `dashboards/baby-stroller.html`.
+- Baby Gear Tracker and Nuna Stroller Tracker: retained as legacy generated pages only; the shared dashboard is the delivery surface.
 
 ## Private Or Archived Views
 

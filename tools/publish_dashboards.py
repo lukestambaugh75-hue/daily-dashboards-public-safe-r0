@@ -33,6 +33,7 @@ TRACKERS = Path.home() / "Documents" / "Files for GitHub"
 FORD = TRACKERS / "Ford Raptor Tracker r0"
 WASHER = TRACKERS / "Washing Machine Deal Finder r0"
 BABY = TRACKERS / "Baby Prep r0"
+STROLLER_DATA = BABY / "data" / "stroller_tracker.json"
 
 BLUE, GREEN, AMBER, RED = "#2563eb", "#059669", "#d97706", "#dc2626"
 
@@ -397,6 +398,110 @@ def build_baby():
     return html, {"purchased": purchased, "requested": requested}
 
 
+def _main_content(html):
+    match = re.search(r"<main>(.*?)</main>", html or "", re.S)
+    return match.group(1) if match else ""
+
+
+def build_baby_stroller(baby_html):
+    stroller = read_json(STROLLER_DATA)
+    if not stroller or not baby_html:
+        return None
+    listings = [item for item in stroller.get("listings", []) if item.get("price_usd") is not None]
+    worthy = sorted(
+        [item for item in listings if item.get("purchase_worthy") and item.get("action_level") in {"ready_safe", "message_verify"}],
+        key=lambda item: (float(item.get("price_usd")), item.get("source_name") or ""),
+    )
+    safe_new = sorted(
+        [item for item in listings if item.get("action_level") == "ready_safe"],
+        key=lambda item: (float(item.get("price_usd")), item.get("source_name") or ""),
+    )
+    best_new = safe_new[0] if safe_new else None
+    lowest = worthy[0] if worthy else None
+    safe_price = money(best_new.get("price_usd")) if best_new else "--"
+    worthy_price = money(lowest.get("price_usd")) if lowest else "--"
+    refreshed = (stroller.get("meta") or {}).get("last_researched_at", "current run")
+    stroller_html_path = ROOT / "dashboards" / "stroller.html"
+    stroller_html = stroller_html_path.read_text(encoding="utf-8") if stroller_html_path.exists() else ""
+    baby_panel = _main_content(baby_html)
+    stroller_panel = _main_content(stroller_html)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Baby + Stroller Dashboard - Public Safe</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .combined-summary {{ padding: 18px 0 8px; }}
+    .combined-summary .top-actions {{ margin-top: 12px; }}
+    .combined-price {{ border: 1px solid #5d8f70; background: #ecfdf5; border-radius: 12px; padding: 16px; margin: 16px 0; }}
+    .combined-price strong {{ display: block; color: #059669; font-size: 2.2rem; }}
+    .combined-switch {{ display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 18px 0; }}
+    .combined-switch button {{ border: 0; border-radius: 999px; padding: 11px 16px; background: #2563eb; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }}
+    .combined-panel[hidden] {{ display: none; }}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Shared Luke + Julie dashboard</p>
+      <h1>Baby gear + stroller dashboard.</h1>
+      <p class="lead">One public-safe buying view with the best new stroller price up front and a button to cycle between stroller and baby-gear details. Stroller evidence last researched {refreshed}.</p>
+      <div class="combined-price">
+        <span class="eyebrow">Best new stroller price</span>
+        <strong>{safe_price}</strong>
+        <span>{best_new.get("source_name") if best_new else "No verified new listing"}</span>
+      </div>
+      <div class="top-actions"><a class="button primary" href="../index.html">Back to hub</a></div>
+      <div class="callout color-index"><strong>Color index.</strong><p><strong>Green</strong> = recommended or ready to act. <strong>Blue</strong> = information only. <strong>Amber</strong> = caution. <strong>Red</strong> = blocked or stop.</p></div>
+    </div>
+  </header>
+  <main>
+    <section class="section combined-summary" aria-labelledby="combined-summary-title">
+      <div class="wrap">
+        <div class="combined-switch">
+          <div><p class="eyebrow">Detail view</p><h2 id="combined-summary-title">One dashboard, two detail layers</h2><p class="meta">Lowest purchase-worthy stroller lead: {worthy_price}. Use the button to cycle detail layers.</p></div>
+          <button type="button" id="combined-cycle" aria-pressed="false" aria-controls="stroller-details-panel baby-details-panel">Cycle details</button>
+        </div>
+        <div class="combined-panel" id="stroller-details-panel">
+          <p class="eyebrow">Stroller details</p>
+          <p>Lowest purchase-worthy lead: <strong>{worthy_price}</strong>. Used car-seat bundles remain message-first until the safety checklist is proven.</p>
+        </div>
+        <div class="combined-panel" id="baby-details-panel" hidden>
+          <p class="eyebrow">Baby gear details</p>
+          <p>Registry progress, durable gear totals, and safety cautions are below.</p>
+        </div>
+      </div>
+    </section>
+    <section class="combined-panel" id="stroller-detail-content">{stroller_panel}</section>
+    <section class="combined-panel" id="baby-detail-content" hidden>{baby_panel}</section>
+  </main>
+  <script>
+  (() => {{
+    const button = document.getElementById('combined-cycle');
+    const stroller = document.getElementById('stroller-details-panel');
+    const baby = document.getElementById('baby-details-panel');
+    const strollerContent = document.getElementById('stroller-detail-content');
+    const babyContent = document.getElementById('baby-detail-content');
+    if (!button) return;
+    button.addEventListener('click', () => {{
+      const showBaby = baby.hidden;
+      stroller.hidden = showBaby;
+      baby.hidden = !showBaby;
+      strollerContent.hidden = showBaby;
+      babyContent.hidden = !showBaby;
+      button.setAttribute('aria-pressed', String(showBaby));
+      button.textContent = showBaby ? 'Show stroller details' : 'Show baby gear details';
+    }});
+  }})();
+  </script>
+  <footer class="footer"><div class="wrap">Public-safe summary only. Confirm final price, seller, stock, taxes, fees, pickup, and delivery timing before buying.</div></footer>
+</body>
+</html>
+"""
+
+
 # ------------------------------------------------------------------- INDEX
 
 def build_index(ford, washer, baby, stroller_price="$600"):
@@ -421,8 +526,7 @@ def build_index(ford, washer, baby, stroller_price="$600"):
       <div class="top-actions">
         <a class="button primary" href="dashboards/ford.html">Open Raptor summary</a>
         <a class="button" href="dashboards/washer.html">Open Washer summary</a>
-        <a class="button" href="dashboards/stroller.html">Open Stroller board</a>
-        <a class="button" href="dashboards/baby.html">Open Baby gear</a>
+        <a class="button primary" href="dashboards/baby-stroller.html">Open Baby + Stroller dashboard</a>
       </div>
       <div class="callout color-index">
         <strong>Color index.</strong>
@@ -476,12 +580,12 @@ def build_index(ford, washer, baby, stroller_price="$600"):
             <h2>Message seller before treating it as safe</h2>
             <p class="meta">The price is under target, but the infant seat requires complete crash, expiry, label, recall, and insert verification.</p>
             <div class="sub-links">
-              <a href="dashboards/stroller.html#price-ladder">Price ladder</a>
-              <a href="dashboards/stroller.html">Safe-buy options</a>
-              <a href="dashboards/stroller.html">Safety checklist</a>
+              <a href="dashboards/baby-stroller.html#stroller-details-panel">Price ladder</a>
+              <a href="dashboards/baby-stroller.html">Safe-buy options</a>
+              <a href="dashboards/baby-stroller.html">Safety checklist</a>
             </div>
           </div>
-          <a class="button primary" href="dashboards/stroller.html">Open Julie price board</a>
+          <a class="button primary" href="dashboards/baby-stroller.html">Open combined dashboard</a>
         </article>
       </div>
     </div>
@@ -520,7 +624,7 @@ def build_index(ford, washer, baby, stroller_price="$600"):
               <h3>Baby Gear Tracker</h3>
               <p class="meta">{baby.get('purchased', 0)} of {baby.get('requested', 0)} registry items purchased. Budget and category snapshot.</p>
             </div>
-            <a class="button" href="dashboards/baby.html">Open public-safe view</a>
+            <a class="button" href="dashboards/baby-stroller.html">Open combined dashboard</a>
           </article>
           <article class="card">
             <span class="status live">Active</span>
@@ -528,7 +632,7 @@ def build_index(ford, washer, baby, stroller_price="$600"):
               <h3>Nuna Stroller Tracker</h3>
               <p class="meta">Julie-focused price ladder, purchase-worthy leads, and car-seat safety guardrails.</p>
             </div>
-            <a class="button primary" href="dashboards/stroller.html">Open Julie price board</a>
+            <a class="button primary" href="dashboards/baby-stroller.html">Open combined dashboard</a>
           </article>
         </div>
       </div>
@@ -579,12 +683,14 @@ def main():
     ford_html, ford = build_ford()
     washer_html, washer = build_washer()
     baby_html, baby = build_baby()
+    combined_html = build_baby_stroller(baby_html)
     index_html = build_index(ford, washer, baby)
 
     targets = [
         (ROOT / "dashboards" / "ford.html", ford_html),
         (ROOT / "dashboards" / "washer.html", washer_html),
         (ROOT / "dashboards" / "baby.html", baby_html),
+        (ROOT / "dashboards" / "baby-stroller.html", combined_html),
         (ROOT / "index.html", index_html),
     ]
 
