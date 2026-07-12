@@ -475,6 +475,8 @@ def build_baby_stroller(baby_html):
     .warm-combined .button.primary {{ border-color: var(--warm-olive); background: var(--warm-olive); color: #fff; }}
     .warm-combined .section, .warm-combined .hero {{ background: transparent; }}
     .warm-combined .deal-card, .warm-combined .panel, .warm-combined .search-card, .warm-combined .card {{ border-color: var(--warm-line); border-radius: 4px; background: var(--warm-paper); box-shadow: none; }}
+    .warm-combined .table-wrap {{ max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }}
+    .warm-combined .price-table {{ min-width: 980px; }}
     .warm-combined .footer {{ border-top: 1px solid var(--warm-line); background: var(--warm-paper); color: var(--warm-muted); }}
     @media (max-width: 680px) {{
       .warm-combined .warm-hero {{ padding-top: 44px; }}
