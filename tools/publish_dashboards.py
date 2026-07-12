@@ -449,15 +449,24 @@ def build_baby_stroller(baby_html):
         )
 
     registry_rows = []
-    for item in registry_items:
+    for index, item in enumerate(registry_items):
         price = item.get("amazon_price_usd")
+        detail_id = f"registry-detail-{index}"
+        offers = [f'<a class="offer-button" href="https://www.amazon.com/dp/{text(item.get("asin"))}" target="_blank" rel="noopener noreferrer">Open Amazon</a>'] if item.get("asin") else []
+        for offer in item.get("other_retailers") or []:
+            url = offer.get("product_url") or offer.get("evidence_url")
+            if url and str(url).startswith("https://") and "amazon.com/baby-reg/" not in str(url):
+                offers.append(f'<a class="offer-button" href="{text(url)}" target="_blank" rel="noopener noreferrer">{text(offer.get("retailer"), "Other retailer")}</a>')
+        offer_buttons = "".join(offers) or '<span class="muted">No public offer link recorded</span>'
         registry_rows.append(
-            f'<tr data-search="{text(" ".join(str(item.get(k, "")) for k in ("title", "category_normalized", "status", "checked_at")))}">'
+            f'<tr data-search="{text(" ".join(str(item.get(k, "")) for k in ("title", "category_normalized", "status", "checked_at")))}" data-detail="{detail_id}">'
             f'<td>{text(item.get("category_normalized"), "Uncategorized")}</td>'
             f'<td class="item-title">{text(item.get("title"))}</td>'
             f'<td>{money(price) if price is not None else "--"}</td>'
             f'<td>{text(item.get("qty_requested"), "0")}</td><td>{text(item.get("qty_purchased"), "0")}</td>'
-            f'<td>{text(item.get("status"))}</td><td>{text(item.get("checked_at"))}</td></tr>'
+            f'<td>{text(item.get("status"))}</td><td>{text(item.get("checked_at"))}</td>'
+            f'<td><button class="detail-toggle" type="button" aria-expanded="false" aria-controls="{detail_id}">View details</button></td></tr>'
+            f'<tr class="registry-detail" id="{detail_id}" hidden><td colspan="8"><strong>Offers and item context</strong><div class="offer-buttons">{offer_buttons}</div><span class="muted">ASIN: {text(item.get("asin"), "not recorded")} · {text(item.get("match_notes"), "No additional match note recorded.")}</span></td></tr>'
         )
 
     gear_items = (read_json(BABY / "data" / "gear.json") or {}).get("price_items", [])
@@ -479,7 +488,7 @@ def build_baby_stroller(baby_html):
   <title>Baby + Stroller Dashboard - Public Safe</title>
   <link rel="stylesheet" href="../styles.css">
   <style>
-    :root {{ color-scheme: light; --grid-bg: #f4f6f8; --grid-paper: #fff; --grid-ink: #20252b; --grid-muted: #65707b; --grid-line: #cbd3dc; --grid-blue: #dcecff; --grid-green: #e6f3e8; --grid-amber: #fff3d8; }}
+    :root {{ color-scheme: dark; --grid-bg: #101214; --grid-paper: #181c20; --grid-ink: #f3f5f4; --grid-muted: #aeb8b3; --grid-line: #354048; --grid-blue: #1f3e5e; --grid-green: #214831; --grid-amber: #5a431d; }}
     body.grid-dashboard {{ margin: 0; background: var(--grid-bg); color: var(--grid-ink); font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
     .grid-dashboard .grid-wrap {{ width: min(1240px, calc(100% - 28px)); margin: 0 auto; }}
     .grid-dashboard .grid-header {{ padding: 28px 0 20px; background: var(--grid-paper); border-bottom: 1px solid var(--grid-line); }}
@@ -492,27 +501,31 @@ def build_baby_stroller(baby_html):
     .grid-dashboard .summary-cell:last-child {{ border-right: 0; }}
     .grid-dashboard .summary-label {{ display: block; color: var(--grid-muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }}
     .grid-dashboard .summary-value {{ display: block; margin-top: 4px; font-size: 1.35rem; font-weight: 700; }}
-    .grid-dashboard .toolbar {{ position: sticky; top: 0; z-index: 2; padding: 12px 0; background: rgba(244,246,248,.96); border-bottom: 1px solid var(--grid-line); }}
+    .grid-dashboard .toolbar {{ position: sticky; top: 0; z-index: 2; padding: 12px 0; background: rgba(16,18,20,.96); border-bottom: 1px solid var(--grid-line); }}
     .grid-dashboard .toolbar-row {{ display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }}
     .grid-dashboard button, .grid-dashboard input {{ min-height: 36px; border: 1px solid var(--grid-line); border-radius: 3px; font: inherit; }}
     .grid-dashboard button {{ padding: 7px 12px; background: var(--grid-paper); color: var(--grid-ink); cursor: pointer; }}
-    .grid-dashboard button[aria-selected="true"], .grid-dashboard button.primary {{ background: #245b8f; border-color: #245b8f; color: #fff; }}
-    .grid-dashboard button:focus-visible, .grid-dashboard input:focus-visible {{ outline: 3px solid #8bb9e7; outline-offset: 1px; }}
+    .grid-dashboard button[aria-selected="true"], .grid-dashboard button.primary {{ background: #2563a1; border-color: #67aefb; color: #fff; }}
+    .grid-dashboard button:focus-visible, .grid-dashboard input:focus-visible {{ outline: 3px solid #67aefb; outline-offset: 1px; }}
     .grid-dashboard input {{ flex: 1 1 260px; padding: 7px 10px; background: var(--grid-paper); }}
     .grid-dashboard .view-panel[hidden] {{ display: none; }}
     .grid-dashboard .sheet {{ margin: 18px 0 34px; background: var(--grid-paper); border: 1px solid var(--grid-line); }}
     .grid-dashboard .sheet-head {{ display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px; border-bottom: 1px solid var(--grid-line); }}
     .grid-dashboard .sheet-scroll {{ overflow-x: auto; }}
     .grid-dashboard table {{ width: 100%; border-collapse: collapse; text-align: left; }}
-    .grid-dashboard th {{ position: sticky; top: 0; z-index: 1; background: #e9eef3; color: #37424e; font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }}
+    .grid-dashboard th {{ position: sticky; top: 0; z-index: 1; background: #20262c; color: #dce4e8; font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }}
     .grid-dashboard th, .grid-dashboard td {{ padding: 9px 10px; border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line); vertical-align: top; }}
-    .grid-dashboard tr:nth-child(even) td {{ background: #fafbfd; }}
+    .grid-dashboard tr:nth-child(even) td {{ background: #1d2227; }}
     .grid-dashboard th:last-child, .grid-dashboard td:last-child {{ border-right: 0; }}
     .grid-dashboard .item-title {{ min-width: 360px; }}
     .grid-dashboard .status-text {{ display: inline-block; padding: 2px 6px; border-radius: 2px; font-size: .75rem; font-weight: 700; }}
     .grid-dashboard .status-text.safe {{ background: var(--grid-green); color: #275e32; }}
     .grid-dashboard .status-text.verify {{ background: var(--grid-blue); color: #1d4e79; }}
     .grid-dashboard .status-text.caution {{ background: var(--grid-amber); color: #805a16; }}
+    .grid-dashboard .detail-toggle, .grid-dashboard .offer-button {{ min-height: 30px; padding: 5px 9px; border: 1px solid var(--grid-line); border-radius: 3px; background: #15191d; color: var(--grid-ink); text-decoration: none; font-size: .8rem; font-weight: 700; white-space: nowrap; }}
+    .grid-dashboard .offer-buttons {{ display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0; }}
+    .grid-dashboard .detail-toggle:hover, .grid-dashboard .offer-button:hover {{ border-color: #67aefb; color: #fff; }}
+    .grid-dashboard .registry-detail td {{ background: #121518 !important; color: var(--grid-muted); }}
     .grid-dashboard .empty-row {{ display: none; padding: 16px; color: var(--grid-muted); }}
     .grid-dashboard .notes {{ margin: 0 0 34px; color: var(--grid-muted); }}
     @media (max-width: 720px) {{
@@ -551,7 +564,7 @@ def build_baby_stroller(baby_html):
         <p class="notes">Safety rule: used infant car-seat bundles remain verify-first until crash history, labels, expiration, recalls, original parts, inserts, manual, and clear photos are proven. New/authorized retail is the clean fallback at {safe_price}.</p>
       </section>
       <section class="view-panel" id="registry-panel" role="tabpanel" aria-labelledby="registry-tab" hidden>
-        <div class="sheet"><div class="sheet-head"><h2>Baby registry — all reconciled rows</h2><span class="muted" id="registry-count">{len(registry_rows)} rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Category</th><th>Registry item</th><th>Amazon price</th><th>Qty requested</th><th>Qty purchased</th><th>Status</th><th>Checked</th></tr></thead><tbody>{"".join(registry_rows)}</tbody></table><div class="empty-row">No registry rows match the search.</div></div></div>
+        <div class="sheet"><div class="sheet-head"><h2>Baby registry — all reconciled rows</h2><span class="muted" id="registry-count">{len(registry_rows)} rows</span></div><div class="sheet-scroll"><table><thead><tr><th>Category</th><th>Registry item</th><th>Amazon price</th><th>Qty requested</th><th>Qty purchased</th><th>Status</th><th>Checked</th><th>Actions</th></tr></thead><tbody>{"".join(registry_rows)}</tbody></table><div class="empty-row">No registry rows match the search.</div></div></div>
         <p class="notes">Registry rows show the reconciled item data without exposing the private registry URL or account identifiers.</p>
       </section>
       <section class="view-panel" id="gear-panel" role="tabpanel" aria-labelledby="gear-tab" hidden>
@@ -575,9 +588,9 @@ def build_baby_stroller(baby_html):
     const filter = () => {{
       const query = search.value.trim().toLowerCase();
       const panel = panels[names[current]];
-      const rows = [...panel.querySelectorAll('tbody tr')];
+      const rows = [...panel.querySelectorAll('tbody tr[data-search]')];
       let visible = 0;
-      rows.forEach((row) => {{ const match = !query || row.dataset.search.toLowerCase().includes(query); row.hidden = !match; if (match) visible += 1; }});
+      rows.forEach((row) => {{ const match = !query || row.dataset.search.toLowerCase().includes(query); row.hidden = !match; const detail = document.getElementById(row.dataset.detail); if (detail) detail.hidden = true; if (match) visible += 1; }});
       panel.querySelector('.empty-row').style.display = visible ? 'none' : 'block';
       panel.querySelector('.sheet-head .muted').textContent = `${{visible}} of ${{rows.length}} rows`;
     }};
@@ -587,6 +600,9 @@ def build_baby_stroller(baby_html):
     }});
     document.getElementById('previous-view').addEventListener('click', () => select(current - 1));
     document.getElementById('next-view').addEventListener('click', () => select(current + 1));
+    document.querySelectorAll('.detail-toggle').forEach((button) => {{
+      button.addEventListener('click', () => {{ const detail = document.getElementById(button.getAttribute('aria-controls')); const open = detail.hidden; detail.hidden = !open; button.setAttribute('aria-expanded', String(open)); button.textContent = open ? 'Hide details' : 'View details'; }});
+    }});
     search.addEventListener('input', filter);
     select(0);
   }})();
