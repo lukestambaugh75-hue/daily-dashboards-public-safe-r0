@@ -36,7 +36,8 @@ class AudienceSegregationTests(unittest.TestCase):
     def test_combined_baby_stroller_dashboard_is_the_single_shareable_surface(self):
         self.assertTrue(COMBINED.exists())
         text = COMBINED.read_text(encoding="utf-8")
-        self.assertIn("Cycle details", text)
+        self.assertIn('role="tablist"', text)
+        self.assertGreaterEqual(text.count('role="tab"'), 2)
         self.assertIn("Best new stroller price", text)
         self.assertIn('id="stroller-details-panel"', text)
         self.assertIn('id="baby-details-panel"', text)

@@ -6,48 +6,85 @@
   <title>Baby + Stroller Dashboard - Public Safe</title>
   <link rel="stylesheet" href="../styles.css">
   <style>
-    .combined-summary { padding: 18px 0 8px; }
-    .combined-summary .top-actions { margin-top: 12px; }
-    .combined-price { border: 1px solid #5d8f70; background: #ecfdf5; border-radius: 12px; padding: 16px; margin: 16px 0; }
-    .combined-price strong { display: block; color: #059669; font-size: 2.2rem; }
-    .combined-switch { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
-    .combined-switch button { border: 0; border-radius: 999px; padding: 11px 16px; background: #2563eb; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-    .combined-panel[hidden] { display: none; }
+    :root { color-scheme: light; --warm-ivory: #f8f5ef; --warm-paper: #fffdf9; --warm-ink: #292723; --warm-muted: #756f66; --warm-line: #e4ddd1; --warm-sand: #d6c0a6; --warm-olive: #60705b; --warm-rose: #a66e5d; }
+    body.warm-combined { background: var(--warm-ivory); color: var(--warm-ink); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .warm-combined .warm-hero { padding: 72px 0 46px; background: var(--warm-ivory); border-bottom: 1px solid var(--warm-line); }
+    .warm-combined .warm-hero .wrap { max-width: 980px; }
+    .warm-combined .warm-kicker { color: var(--warm-rose); font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .warm-combined h1 { max-width: 760px; margin: 18px 0 18px; font-size: clamp(2.8rem, 7vw, 6.8rem); line-height: .94; letter-spacing: -.07em; font-weight: 650; }
+    .warm-combined .warm-lead { max-width: 650px; color: var(--warm-muted); font-size: 1.08rem; }
+    .warm-combined .warm-meta { color: var(--warm-muted); font-size: .84rem; }
+    .warm-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 46px 0 0; border-top: 1px solid var(--warm-line); border-bottom: 1px solid var(--warm-line); background: var(--warm-line); }
+    .warm-metric { min-height: 150px; padding: 25px 22px; background: var(--warm-paper); }
+    .warm-metric strong { display: block; margin: 8px 0 4px; font-size: clamp(2rem, 4vw, 3.6rem); font-weight: 620; letter-spacing: -.05em; }
+    .warm-metric small { color: var(--warm-muted); }
+    .warm-combined main { background: var(--warm-ivory); }
+    .warm-combined .warm-section { padding: 52px 0 16px; }
+    .warm-combined .warm-section .wrap { max-width: 980px; }
+    .warm-combined h2 { font-size: clamp(1.7rem, 3vw, 2.65rem); letter-spacing: -.04em; font-weight: 620; }
+    .warm-combined .warm-switch { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+    .warm-tabs { display: inline-flex; padding: 4px; border: 1px solid var(--warm-line); border-radius: 999px; background: #eee8de; }
+    .warm-tab { min-height: 42px; padding: 9px 18px; border: 0; border-radius: 999px; background: transparent; color: var(--warm-muted); font: inherit; font-weight: 750; cursor: pointer; }
+    .warm-tab[aria-selected="true"] { background: var(--warm-paper); color: var(--warm-ink); box-shadow: 0 2px 7px rgba(76, 61, 42, .12); }
+    .warm-tab:focus-visible { outline: 3px solid var(--warm-sand); outline-offset: 3px; }
+    .warm-combined .warm-switch-help { max-width: 420px; margin-bottom: 0; color: var(--warm-muted); text-align: right; }
+    .warm-combined .worth-grid { display: grid; gap: 0; border-top: 1px solid var(--warm-line); }
+    .warm-combined .worth-row { display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--warm-line); }
+    .warm-combined .worth-price { font-size: 1.8rem; font-weight: 650; letter-spacing: -.04em; }
+    .warm-combined .worth-title { margin: 0 0 4px; font-size: 1.06rem; font-weight: 750; }
+    .warm-combined .worth-copy { margin: 0; color: var(--warm-muted); font-size: .9rem; }
+    .warm-combined .warm-badge { display: inline-flex; width: fit-content; padding: 5px 9px; border-radius: 999px; background: #e4ebdf; color: #53644e; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .warm-combined .warm-badge.verify { background: #f1e4dc; color: #8b584a; }
+    .warm-combined .warm-detail-panel[hidden] { display: none; }
+    .warm-combined .warm-detail-panel > .section:first-child { padding-top: 28px; }
+    .warm-combined .button { border-color: var(--warm-line); background: var(--warm-paper); color: var(--warm-ink); border-radius: 999px; }
+    .warm-combined .button.primary { border-color: var(--warm-olive); background: var(--warm-olive); color: #fff; }
+    .warm-combined .section, .warm-combined .hero { background: transparent; }
+    .warm-combined .deal-card, .warm-combined .panel, .warm-combined .search-card, .warm-combined .card { border-color: var(--warm-line); border-radius: 4px; background: var(--warm-paper); box-shadow: none; }
+    .warm-combined .footer { border-top: 1px solid var(--warm-line); background: var(--warm-paper); color: var(--warm-muted); }
+    @media (max-width: 680px) {
+      .warm-combined .warm-hero { padding-top: 44px; }
+      .warm-summary { grid-template-columns: 1fr; }
+      .warm-combined .warm-switch { display: block; }
+      .warm-combined .warm-switch-help { margin-top: 18px; text-align: left; }
+      .warm-tabs { width: 100%; }
+      .warm-tab { flex: 1; }
+      .warm-combined .worth-row { grid-template-columns: 72px minmax(0, 1fr); gap: 12px; }
+      .warm-combined .worth-row .button { grid-column: 2; width: fit-content; }
+    }
   </style>
 </head>
-<body>
-  <header class="hero">
+<body class="warm-combined">
+  <header class="warm-hero">
     <div class="wrap">
-      <p class="eyebrow">Shared Luke + Julie dashboard</p>
-      <h1>Baby gear + stroller dashboard.</h1>
-      <p class="lead">One public-safe buying view with the best new stroller price up front and a button to cycle between stroller and baby-gear details. Stroller evidence last researched 2026-07-12.</p>
-      <div class="combined-price">
-        <span class="eyebrow">Best new stroller price</span>
-        <strong>$800</strong>
-        <span>Bambi Baby</span>
+      <p class="warm-kicker">Baby gear · stroller · 2026-07-12</p>
+      <h1>One calm view of what’s next.</h1>
+      <p class="warm-lead">A shared buying view for Luke and Julie. Start with the clearest safe choice, then open only the detail layer you need.</p>
+      <div class="warm-summary" aria-label="Dashboard summary">
+        <div class="warm-metric"><span class="warm-kicker">Best new stroller price</span><strong>$800</strong><small>Bambi Baby · new and ready to verify at checkout</small></div>
+        <div class="warm-metric"><span class="warm-kicker">Registry verified</span><strong>0/142</strong><small>Our baby list · shared with Luke + Julie</small></div>
       </div>
-      <div class="top-actions"><a class="button primary" href="../index.html">Back to hub</a></div>
-      <div class="callout color-index"><strong>Color index.</strong><p><strong>Green</strong> = recommended or ready to act. <strong>Blue</strong> = information only. <strong>Amber</strong> = caution. <strong>Red</strong> = blocked or stop.</p></div>
     </div>
   </header>
   <main>
-    <section class="section combined-summary" aria-labelledby="combined-summary-title">
+    <section class="warm-section" aria-labelledby="decision-title">
       <div class="wrap">
-        <div class="combined-switch">
-          <div><p class="eyebrow">Detail view</p><h2 id="combined-summary-title">One dashboard, two detail layers</h2><p class="meta">Lowest purchase-worthy stroller lead: $650. Use the button to cycle detail layers.</p></div>
-          <button type="button" id="combined-cycle" aria-pressed="false" aria-controls="stroller-details-panel baby-details-panel">Cycle details</button>
+        <div class="warm-switch">
+          <div><p class="warm-kicker">Your next decision</p><h2 id="decision-title">Worth looking at</h2><p class="warm-meta">The $650 lead is verify-first. The $800 new option is the clean fallback.</p></div>
+          <p class="warm-switch-help">Facebook Marketplace is a message-before-buy lead. Keep the new option in view if safety proof or timing matters more than savings.</p>
         </div>
-        <div class="combined-panel" id="stroller-details-panel">
-          <p class="eyebrow">Stroller details</p>
-          <p>Lowest purchase-worthy lead: <strong>$650</strong>. Used car-seat bundles remain message-first until the safety checklist is proven.</p>
-        </div>
-        <div class="combined-panel" id="baby-details-panel" hidden>
-          <p class="eyebrow">Baby gear details</p>
-          <p>Registry progress, durable gear totals, and safety cautions are below.</p>
+        <div class="worth-grid">
+          <div class="worth-row"><div class="worth-price">$650</div><div><p class="warm-badge verify">Verify first</p><p class="worth-title">Exact-system lead with savings</p><p class="worth-copy">Message the seller and confirm crash history, labels, expiry, recalls, parts, inserts, manual, and clear photos.</p></div><a class="button" href="#stroller-details-panel">See stroller detail</a></div>
+          <div class="worth-row"><div class="worth-price">$800</div><div><p class="warm-badge">Safe fallback</p><p class="worth-title">New, preferred Granite option</p><p class="worth-copy">Use Bambi Baby as the clean buy-now path if the resale lead cannot prove the car-seat checklist.</p></div><a class="button primary" href="#stroller-details-panel">Open safe path</a></div>
         </div>
       </div>
     </section>
-    <section class="combined-panel" id="stroller-detail-content">
+    <section class="warm-section" aria-labelledby="details-title">
+      <div class="wrap">
+        <div class="warm-switch"><div><p class="warm-kicker">Go deeper when you need to</p><h2 id="details-title">Details</h2></div><div class="warm-tabs" role="tablist" aria-label="Dashboard details"><button class="warm-tab" id="stroller-tab" type="button" role="tab" aria-selected="true" aria-controls="stroller-details-panel">Stroller</button><button class="warm-tab" id="baby-tab" type="button" role="tab" aria-selected="false" aria-controls="baby-details-panel">Baby gear</button></div></div>
+      </div>
+    </section>
+    <section class="warm-detail-panel" id="stroller-details-panel" role="tabpanel" aria-labelledby="stroller-tab">
     <section class="section" id="purchase-worthy">
       <div class="wrap">
         <div class="section-head">
@@ -486,7 +523,7 @@
       </div>
     </section>
   </section>
-    <section class="combined-panel" id="baby-detail-content" hidden>
+    <section class="warm-detail-panel" id="baby-details-panel" role="tabpanel" aria-labelledby="baby-tab" hidden>
     <section class="section">
       <div class="wrap">
         <div class="metric-row"><div class="metric"><span class="meta">Gear items tracked</span><strong>19</strong></div><div class="metric"><span class="meta">Mid-tier new total</span><strong>$2,887</strong></div><div class="metric"><span class="meta">Registry items</span><strong>136</strong></div><div class="metric"><span class="meta">Registry purchased</span><strong>0 of 142</strong></div></div>
@@ -519,21 +556,17 @@
   </main>
   <script>
   (() => {
-    const button = document.getElementById('combined-cycle');
-    const stroller = document.getElementById('stroller-details-panel');
-    const baby = document.getElementById('baby-details-panel');
-    const strollerContent = document.getElementById('stroller-detail-content');
-    const babyContent = document.getElementById('baby-detail-content');
-    if (!button) return;
-    button.addEventListener('click', () => {
-      const showBaby = baby.hidden;
-      stroller.hidden = showBaby;
-      baby.hidden = !showBaby;
-      strollerContent.hidden = showBaby;
-      babyContent.hidden = !showBaby;
-      button.setAttribute('aria-pressed', String(showBaby));
-      button.textContent = showBaby ? 'Show stroller details' : 'Show baby gear details';
+    const tabs = [...document.querySelectorAll('.warm-tab')];
+    const panels = { stroller: document.getElementById('stroller-details-panel'), baby: document.getElementById('baby-details-panel') };
+    const select = (name) => {
+      tabs.forEach((tab) => { const active = tab.id === `${name}-tab`; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; });
+      Object.entries(panels).forEach(([key, panel]) => { panel.hidden = key !== name; });
+    };
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(tab.id.replace('-tab', '')));
+      tab.addEventListener('keydown', (event) => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length].focus(); } if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(tab.id.replace('-tab', '')); } });
     });
+    select('stroller');
   })();
   </script>
   <footer class="footer"><div class="wrap">Public-safe summary only. Confirm final price, seller, stock, taxes, fees, pickup, and delivery timing before buying.</div></footer>
