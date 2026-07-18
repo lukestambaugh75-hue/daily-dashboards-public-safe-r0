@@ -22,6 +22,7 @@ SKIP_LIVE_LINK_HOSTS = {
     "facebook.com",
     "www.albeebaby.com",
     "www.bloomingdales.com",
+    "www.crateandbarrel.com",
     "www.ebay.com",
     "www.facebook.com",
     "www.potterybarnkids.com",
