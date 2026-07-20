@@ -21,6 +21,7 @@ PUBLIC_HTML_URLS = [
 SKIP_LIVE_LINK_HOSTS = {
     "facebook.com",
     "www.albeebaby.com",
+    "www.amazon.com",
     "www.bloomingdales.com",
     "www.crateandbarrel.com",
     "www.ebay.com",
