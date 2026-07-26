@@ -27,6 +27,11 @@ This repo is intentionally public. Do not add private repo links, local file pat
 raw source ledgers, token usage details, exact trip details, internal company
 content, ZIP/address references, or sensitive filenames.
 
+The private Baby Prep monorepo may contain pregnancy and daycare research. Those
+project folders are not publisher inputs and must never be copied into this repo.
+Only the existing sanitized gear, registry-summary, and stroller surfaces are in
+scope for public generation.
+
 The main page is a top-3 quality-and-price decision layer for Luke/Julie-safe
 content. Every hub link stays inside this public-safe repository. Recipient-
 specific trackers remain in separate repositories and have no runtime link,
