@@ -852,11 +852,17 @@ def main():
         (ROOT / "index.html", index_html),
     ]
 
+    missing = [path.name for path, html in targets if html is None]
+    if missing:
+        print(
+            "\nMISSING SOURCE DATA: refusing a partial public-dashboard render for "
+            + ", ".join(missing),
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     stale = []
     for path, html in targets:
-        if html is None:
-            print(f"  skipped {path.name} (no source data on this machine)")
-            continue
         current = path.read_text(encoding="utf-8") if path.exists() else None
         if current == html:
             print(f"  unchanged {path.name}")

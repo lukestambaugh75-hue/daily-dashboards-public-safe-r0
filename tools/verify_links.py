@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Verify public-safe dashboard links and obvious sensitive text leaks."""
 
+import argparse
 from html.parser import HTMLParser
 from pathlib import Path
+import time
 from urllib.parse import unquote, urlparse
 from urllib.request import Request, urlopen
 
@@ -11,12 +13,21 @@ from canonical_checkout import assert_canonical_checkout
 ROOT = Path(__file__).resolve().parents[1]
 HTML_FILES = [ROOT / "index.html", *sorted((ROOT / "dashboards").glob("*.html"))]
 PUBLIC_SITE_BASE = "https://lukestambaugh75-hue.github.io/daily-dashboards-public-safe-r0"
+PUBLIC_ARTIFACTS = [
+    "index.html",
+    "dashboards/washer.html",
+    "dashboards/ford.html",
+    "dashboards/baby.html",
+    "dashboards/stroller.html",
+    "dashboards/baby-stroller.html",
+    "styles.css",
+]
+# Backward-compatible name for older tests/importers. The authoritative proof
+# now covers every delivery page plus its shared stylesheet.
 PUBLIC_HTML_URLS = [
-    f"{PUBLIC_SITE_BASE}/index.html",
-    f"{PUBLIC_SITE_BASE}/dashboards/washer.html",
-    f"{PUBLIC_SITE_BASE}/dashboards/ford.html",
-    f"{PUBLIC_SITE_BASE}/dashboards/baby.html",
-    f"{PUBLIC_SITE_BASE}/dashboards/stroller.html",
+    f"{PUBLIC_SITE_BASE}/{relative}"
+    for relative in PUBLIC_ARTIFACTS
+    if relative.endswith(".html")
 ]
 SKIP_LIVE_LINK_HOSTS = {
     "facebook.com",
@@ -174,7 +185,31 @@ def check_live_url(url, expect_html=False):
             raise AssertionError(f"{url} returned non-HTML content type: {content_type}")
 
 
-def main():
+def check_live_artifact(relative_path):
+    local = ROOT / relative_path
+    if not local.is_file():
+        raise AssertionError(f"missing local public artifact: {relative_path}")
+    separator = "&" if "?" in relative_path else "?"
+    url = (
+        f"{PUBLIC_SITE_BASE}/{relative_path}{separator}"
+        f"verify={int(time.time() * 1000)}"
+    )
+    req = Request(url, headers={
+        "User-Agent": "codex-public-dashboard-byte-check/1.0",
+        "Cache-Control": "no-cache",
+    })
+    with urlopen(req, timeout=20) as response:
+        if response.status >= 400:
+            raise AssertionError(f"{url} returned HTTP {response.status}")
+        received = response.read()
+    expected = local.read_bytes()
+    if received != expected:
+        raise AssertionError(
+            f"live public artifact differs from committed local bytes: {relative_path}"
+        )
+
+
+def main(*, retailer_liveness=False):
     assert_canonical_checkout(ROOT)
     live_urls = set()
     for path in HTML_FILES:
@@ -187,12 +222,24 @@ def main():
                 host = urlparse(href).netloc.lower()
                 if host not in SKIP_LIVE_LINK_HOSTS:
                     live_urls.add(href)
-    for url in sorted(live_urls):
-        check_live_url(url)
-    for url in PUBLIC_HTML_URLS:
-        check_live_url(url, expect_html=True)
-    print(f"verified {len(HTML_FILES)} html files, {len(live_urls)} external urls, and {len(PUBLIC_HTML_URLS)} public html urls")
+    if retailer_liveness:
+        for url in sorted(live_urls):
+            check_live_url(url)
+    for relative_path in PUBLIC_ARTIFACTS:
+        check_live_artifact(relative_path)
+    checked_external = len(live_urls) if retailer_liveness else 0
+    print(
+        f"verified {len(HTML_FILES)} html files, {checked_external} retailer urls, "
+        f"and {len(PUBLIC_ARTIFACTS)} exact public artifacts"
+    )
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--retailer-liveness",
+        action="store_true",
+        help="also check third-party retailer links; not part of deployment identity",
+    )
+    args = parser.parse_args()
+    main(retailer_liveness=args.retailer_liveness)

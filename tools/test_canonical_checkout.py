@@ -157,15 +157,15 @@ class VerifyLinksGuardTests(unittest.TestCase):
         events = []
         original_guard = getattr(verify_links, "assert_canonical_checkout", None)
         original_files = verify_links.HTML_FILES
-        original_urls = verify_links.PUBLIC_HTML_URLS
+        original_artifacts = verify_links.PUBLIC_ARTIFACTS
         verify_links.assert_canonical_checkout = lambda root: events.append(root)
         verify_links.HTML_FILES = []
-        verify_links.PUBLIC_HTML_URLS = []
+        verify_links.PUBLIC_ARTIFACTS = []
         try:
             verify_links.main()
         finally:
             verify_links.HTML_FILES = original_files
-            verify_links.PUBLIC_HTML_URLS = original_urls
+            verify_links.PUBLIC_ARTIFACTS = original_artifacts
             if original_guard is None:
                 del verify_links.assert_canonical_checkout
             else:
@@ -175,14 +175,14 @@ class VerifyLinksGuardTests(unittest.TestCase):
 
     def test_main_verifies_the_real_local_html_graph_without_live_network(self):
         original_guard = verify_links.assert_canonical_checkout
-        original_live = verify_links.check_live_url
+        original_live = verify_links.check_live_artifact
         verify_links.assert_canonical_checkout = lambda _root: None
-        verify_links.check_live_url = lambda _url, expect_html=False: None
+        verify_links.check_live_artifact = lambda _relative: None
         try:
             verify_links.main()
         finally:
             verify_links.assert_canonical_checkout = original_guard
-            verify_links.check_live_url = original_live
+            verify_links.check_live_artifact = original_live
 
     def test_local_link_accepts_an_existing_fragment_target(self):
         verify_links.check_local_link(

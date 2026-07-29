@@ -68,3 +68,8 @@ move, or delete it as part of dashboard refresh work.
 ```bash
 /usr/bin/python3 tools/verify_links.py
 ```
+
+The default verifier proves local audience safety and exact deployed bytes for
+all six HTML pages plus `styles.css`. Third-party retailer availability changes
+independently and is checked only when explicitly requested with
+`--retailer-liveness`; it cannot invalidate an otherwise exact deployment.
