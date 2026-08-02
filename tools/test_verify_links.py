@@ -17,6 +17,37 @@ class VerifyLinksPolicyTests(unittest.TestCase):
         self.assertIn("dashboards/baby-stroller.html", verify_links.PUBLIC_ARTIFACTS)
         self.assertIn("styles.css", verify_links.PUBLIC_ARTIFACTS)
 
+    @mock.patch.object(verify_links.subprocess, "run")
+    def test_dirty_candidate_uses_committed_bytes_for_prepublication_check(self, run):
+        run.side_effect = [
+            mock.Mock(returncode=1),
+            mock.Mock(returncode=0, stdout=b"published-bytes"),
+        ]
+        self.assertEqual(
+            b"published-bytes",
+            verify_links.expected_deployed_bytes("dashboards/stroller.html"),
+        )
+        self.assertEqual(
+            [
+                mock.call(
+                    [
+                        "git", "-C", str(verify_links.ROOT), "diff", "--quiet",
+                        "--", "dashboards/stroller.html",
+                    ],
+                    check=False,
+                ),
+                mock.call(
+                    [
+                        "git", "-C", str(verify_links.ROOT), "show",
+                        "HEAD:dashboards/stroller.html",
+                    ],
+                    check=False,
+                    capture_output=True,
+                ),
+            ],
+            run.call_args_list,
+        )
+
     def test_default_main_does_not_check_retailer_liveness(self):
         with mock.patch.object(verify_links, "assert_canonical_checkout"), \
              mock.patch.object(verify_links, "check_live_url") as retailer, \

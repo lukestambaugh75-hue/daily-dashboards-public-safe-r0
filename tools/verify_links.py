@@ -4,6 +4,7 @@
 import argparse
 from html.parser import HTMLParser
 from pathlib import Path
+import subprocess
 import time
 from urllib.parse import unquote, urlparse
 from urllib.request import Request, urlopen
@@ -185,6 +186,34 @@ def check_live_url(url, expect_html=False):
             raise AssertionError(f"{url} returned non-HTML content type: {content_type}")
 
 
+def expected_deployed_bytes(relative_path):
+    """Return candidate bytes only when they are already committed.
+
+    This verifier intentionally runs before publication.  For a dirty generated
+    candidate, GitHub Pages can only be expected to serve the current HEAD;
+    comparing it to the candidate would make a correct pre-push check fail.
+    """
+    local = ROOT / relative_path
+    if not local.is_file():
+        raise AssertionError(f"missing local public artifact: {relative_path}")
+    diff = subprocess.run(
+        ["git", "-C", str(ROOT), "diff", "--quiet", "--", relative_path],
+        check=False,
+    )
+    if diff.returncode == 0:
+        return local.read_bytes()
+    if diff.returncode != 1:
+        raise AssertionError(f"cannot determine Git state for public artifact: {relative_path}")
+    committed = subprocess.run(
+        ["git", "-C", str(ROOT), "show", f"HEAD:{relative_path}"],
+        check=False,
+        capture_output=True,
+    )
+    if committed.returncode != 0:
+        raise AssertionError(f"cannot read committed public artifact: {relative_path}")
+    return committed.stdout
+
+
 def check_live_artifact(relative_path):
     local = ROOT / relative_path
     if not local.is_file():
@@ -202,10 +231,10 @@ def check_live_artifact(relative_path):
         if response.status >= 400:
             raise AssertionError(f"{url} returned HTTP {response.status}")
         received = response.read()
-    expected = local.read_bytes()
+    expected = expected_deployed_bytes(relative_path)
     if received != expected:
         raise AssertionError(
-            f"live public artifact differs from committed local bytes: {relative_path}"
+            f"live public artifact differs from deployed committed bytes: {relative_path}"
         )
 
 
