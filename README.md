@@ -13,6 +13,21 @@ uglier URL that could break independently.
 
 ## Publishing
 
+The public checkout contains separate tracker audiences. Scheduled lanes must
+publish with an explicit scope so a Ford run cannot regenerate Baby or stroller
+pages:
+
+```bash
+python3 tools/publish_dashboards.py --scope ford
+python3 tools/publish_dashboards.py --scope ford --check
+python3 tools/verify_links.py --scope ford
+```
+
+Use `--scope baby` for the Baby pages. The default unscoped command remains a
+deliberate full-hub maintenance rebuild and is not used by scheduled tracker
+runs. A Ford publication stages only `dashboards/ford.html`; it does not stage
+`index.html` or any Baby/Stroller page.
+
 The pages under `dashboards/` and `index.html` are **generated**, not hand-written:
 
     python3 tools/publish_dashboards.py            # regenerate from live tracker data

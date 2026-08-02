@@ -55,6 +55,14 @@ class VerifyLinksPolicyTests(unittest.TestCase):
             verify_links.main()
         retailer.assert_not_called()
 
+    def test_ford_scope_checks_only_the_ford_artifact(self):
+        with mock.patch.object(verify_links, "assert_canonical_checkout"), \
+             mock.patch.object(verify_links, "assert_no_forbidden_text"), \
+             mock.patch.object(verify_links, "check_local_link"), \
+             mock.patch.object(verify_links, "check_live_artifact") as live:
+            verify_links.main(scope="ford")
+        live.assert_called_once_with("dashboards/ford.html")
+
 
 if __name__ == "__main__":
     unittest.main()

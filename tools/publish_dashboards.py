@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """Generate the public-safe dashboards and the hub index from live tracker data.
 
-    python3 tools/publish_dashboards.py            # regenerate everything
-    python3 tools/publish_dashboards.py --check    # fail if the committed files are stale
+    python3 tools/publish_dashboards.py                    # regenerate everything
+    python3 tools/publish_dashboards.py --scope ford        # regenerate Ford only
+    python3 tools/publish_dashboards.py --scope baby        # regenerate Baby pages only
+    python3 tools/publish_dashboards.py --scope ford --check
+
+The scheduled tracker lanes use a scope. The default ``all`` mode remains a
+deliberate full-hub maintenance operation; it is not a safe per-tracker command.
 
 Why this exists: the public-safe pages used to be hand-written by an agent on every run.
 They drifted, and they stayed thin -- 3.4 KB of static summary next to a 300 KB private
@@ -830,27 +835,50 @@ def build_index(ford, washer, baby, stroller_price="$600"):
 """
 
 
-# -------------------------------------------------------------------- main
-
-def main():
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--check", action="store_true",
-                    help="exit 1 if the committed files differ from a fresh render")
-    args = ap.parse_args()
+def build_targets(scope):
+    """Return only the generated targets owned by one publication scope."""
+    if scope == "ford":
+        ford_html, _ford = build_ford()
+        return [(ROOT / "dashboards" / "ford.html", ford_html)]
+    if scope == "baby":
+        baby_html, _baby = build_baby()
+        combined_html = build_baby_stroller(baby_html)
+        return [
+            (ROOT / "dashboards" / "baby.html", baby_html),
+            (ROOT / "dashboards" / "baby-stroller.html", combined_html),
+        ]
+    if scope != "all":
+        raise ValueError(f"unknown publication scope: {scope}")
 
     ford_html, ford = build_ford()
     washer_html, washer = build_washer()
     baby_html, baby = build_baby()
     combined_html = build_baby_stroller(baby_html)
     index_html = build_index(ford, washer, baby)
-
-    targets = [
+    return [
         (ROOT / "dashboards" / "ford.html", ford_html),
         (ROOT / "dashboards" / "washer.html", washer_html),
         (ROOT / "dashboards" / "baby.html", baby_html),
         (ROOT / "dashboards" / "baby-stroller.html", combined_html),
         (ROOT / "index.html", index_html),
     ]
+
+
+# -------------------------------------------------------------------- main
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--check", action="store_true",
+                    help="exit 1 if the committed files differ from a fresh render")
+    ap.add_argument(
+        "--scope",
+        choices=("all", "ford", "baby"),
+        default="all",
+        help="limit generation to one tracker lane; default is the full-hub rebuild",
+    )
+    args = ap.parse_args()
+
+    targets = build_targets(args.scope)
 
     missing = [path.name for path, html in targets if html is None]
     if missing:

@@ -23,6 +23,15 @@ PUBLIC_ARTIFACTS = [
     "dashboards/baby-stroller.html",
     "styles.css",
 ]
+PUBLIC_ARTIFACTS_BY_SCOPE = {
+    "all": PUBLIC_ARTIFACTS,
+    "ford": ["dashboards/ford.html"],
+    "baby": [
+        "dashboards/baby.html",
+        "dashboards/stroller.html",
+        "dashboards/baby-stroller.html",
+    ],
+}
 # Backward-compatible name for older tests/importers. The authoritative proof
 # now covers every delivery page plus its shared stylesheet.
 PUBLIC_HTML_URLS = [
@@ -238,10 +247,14 @@ def check_live_artifact(relative_path):
         )
 
 
-def main(*, retailer_liveness=False):
+def main(*, retailer_liveness=False, scope="all"):
+    if scope not in PUBLIC_ARTIFACTS_BY_SCOPE:
+        raise ValueError(f"unknown verification scope: {scope}")
+    scoped_artifacts = PUBLIC_ARTIFACTS_BY_SCOPE[scope]
+    scoped_html = [ROOT / relative for relative in scoped_artifacts if relative.endswith(".html")]
     assert_canonical_checkout(ROOT)
     live_urls = set()
-    for path in HTML_FILES:
+    for path in scoped_html:
         assert_no_forbidden_text(path)
         parser = LinkParser()
         parser.feed(path.read_text(encoding="utf-8"))
@@ -254,12 +267,12 @@ def main(*, retailer_liveness=False):
     if retailer_liveness:
         for url in sorted(live_urls):
             check_live_url(url)
-    for relative_path in PUBLIC_ARTIFACTS:
+    for relative_path in scoped_artifacts:
         check_live_artifact(relative_path)
     checked_external = len(live_urls) if retailer_liveness else 0
     print(
-        f"verified {len(HTML_FILES)} html files, {checked_external} retailer urls, "
-        f"and {len(PUBLIC_ARTIFACTS)} exact public artifacts"
+        f"verified {len(scoped_html)} html files, {checked_external} retailer urls, "
+        f"and {len(scoped_artifacts)} exact public artifacts in {scope} scope"
     )
 
 
@@ -270,5 +283,11 @@ if __name__ == "__main__":
         action="store_true",
         help="also check third-party retailer links; not part of deployment identity",
     )
+    parser.add_argument(
+        "--scope",
+        choices=tuple(PUBLIC_ARTIFACTS_BY_SCOPE),
+        default="all",
+        help="limit local and deployed checks to one tracker lane",
+    )
     args = parser.parse_args()
-    main(retailer_liveness=args.retailer_liveness)
+    main(retailer_liveness=args.retailer_liveness, scope=args.scope)
