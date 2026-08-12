@@ -34,13 +34,13 @@ class WarmDashboardContractTests(unittest.TestCase):
         self.assertIn('id="table-search"', self.text)
         self.assertIn("row.dataset.search", self.text)
 
-    def test_registry_rows_have_detail_controls_and_offer_buttons(self):
+    def test_registry_rows_have_public_safe_detail_controls(self):
         self.assertIn("View details", self.text)
         self.assertIn("detail-toggle", self.text)
         self.assertIn("registry-detail", self.text)
-        self.assertIn("Open Amazon", self.text)
+        self.assertIn("Private registry identifiers and exact Amazon item links are omitted", self.text)
         self.assertIn("Walmart", self.text)
-        self.assertIn("https://www.amazon.com/dp/", self.text)
+        self.assertNotIn("https://www.amazon.com/dp/", self.text)
 
     def test_tables_include_60_day_low_columns_and_current_strollers_only(self):
         self.assertIn("60-day low", self.text)

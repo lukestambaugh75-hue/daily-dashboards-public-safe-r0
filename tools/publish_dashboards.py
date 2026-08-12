@@ -521,7 +521,10 @@ def build_baby_stroller(baby_html):
     for index, item in enumerate(registry_items):
         price = item.get("amazon_price_usd")
         detail_id = f"registry-detail-{index}"
-        offers = [f'<a class="offer-button" href="https://www.amazon.com/dp/{text(item.get("asin"))}" target="_blank" rel="noopener noreferrer">Open Amazon</a>'] if item.get("asin") else []
+        # The exact Amazon item URL contains the private registry ASIN.  The
+        # combined page is public-safe, so keep exact registry identifiers and
+        # direct Amazon links in the private dashboard only.
+        offers = []
         for offer in item.get("other_retailers") or []:
             url = offer.get("product_url") or offer.get("evidence_url")
             if url and str(url).startswith("https://") and "amazon.com/baby-reg/" not in str(url):
@@ -537,7 +540,7 @@ def build_baby_stroller(baby_html):
             f'<td>{text(item.get("status"))}</td><td>{text(item.get("checked_at"))}</td>'
             f'<td>{low_label}<br>{low_delta}</td>'
             f'<td><button class="detail-toggle" type="button" aria-expanded="false" aria-controls="{detail_id}">View details</button></td></tr>'
-            f'<tr class="registry-detail" id="{detail_id}" hidden><td colspan="10"><strong>Offers and item context</strong><div class="offer-buttons">{offer_buttons}</div><span class="muted">ASIN: {text(item.get("asin"), "not recorded")} · {text(item.get("match_notes"), "No additional match note recorded.")}</span></td></tr>'
+            f'<tr class="registry-detail" id="{detail_id}" hidden><td colspan="10"><strong>Public offer context</strong><div class="offer-buttons">{offer_buttons}</div><span class="muted">Private registry identifiers and exact Amazon item links are omitted from this public-safe page.</span></td></tr>'
         )
 
     gear_items = (read_json(BABY / "data" / "gear.json") or {}).get("price_items", [])
