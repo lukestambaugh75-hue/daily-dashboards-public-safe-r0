@@ -39,6 +39,7 @@ TRACKERS = Path.home() / "Documents" / "Files for GitHub"
 FORD = TRACKERS / "Ford Raptor Tracker r0"
 WASHER = TRACKERS / "Washing Machine Deal Finder r0"
 BABY = TRACKERS / "Baby Prep r0"
+GENERAC = TRACKERS / "Generac r0"
 STROLLER_DATA = BABY / "data" / "stroller_tracker.json"
 
 BLUE, GREEN, AMBER, RED = "#2563eb", "#059669", "#d97706", "#dc2626"
@@ -59,6 +60,24 @@ def read_json(path):
         return json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
+
+
+def build_generac():
+    """Import the tracker-owned, separately sanitized Generac public artifact.
+
+    Generac's full dashboard carries ZIP-specific and source-ledger detail.  Its
+    ``public/hub.html`` build is the only artifact eligible for this shared public
+    audience, and copying it byte-for-byte lets both repositories prove one exact
+    deployed identity.
+    """
+    source = GENERAC / "public" / "hub.html"
+    try:
+        html = source.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    if 'data-public-surface="generac-houston"' not in html:
+        return None
+    return html
 
 
 def identity_attrs(private_index):
@@ -847,6 +866,8 @@ def build_targets(scope):
             (ROOT / "dashboards" / "baby.html", baby_html),
             (ROOT / "dashboards" / "baby-stroller.html", combined_html),
         ]
+    if scope == "generac":
+        return [(ROOT / "dashboards" / "generac.html", build_generac())]
     if scope != "all":
         raise ValueError(f"unknown publication scope: {scope}")
 
@@ -854,12 +875,14 @@ def build_targets(scope):
     washer_html, washer = build_washer()
     baby_html, baby = build_baby()
     combined_html = build_baby_stroller(baby_html)
+    generac_html = build_generac()
     index_html = build_index(ford, washer, baby)
     return [
         (ROOT / "dashboards" / "ford.html", ford_html),
         (ROOT / "dashboards" / "washer.html", washer_html),
         (ROOT / "dashboards" / "baby.html", baby_html),
         (ROOT / "dashboards" / "baby-stroller.html", combined_html),
+        (ROOT / "dashboards" / "generac.html", generac_html),
         (ROOT / "index.html", index_html),
     ]
 
@@ -872,7 +895,7 @@ def main():
                     help="exit 1 if the committed files differ from a fresh render")
     ap.add_argument(
         "--scope",
-        choices=("all", "ford", "baby"),
+        choices=("all", "ford", "baby", "generac"),
         default="all",
         help="limit generation to one tracker lane; default is the full-hub rebuild",
     )

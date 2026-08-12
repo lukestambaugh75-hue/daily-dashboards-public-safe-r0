@@ -21,9 +21,12 @@ pages:
 python3 tools/publish_dashboards.py --scope ford
 python3 tools/publish_dashboards.py --scope ford --check
 python3 tools/verify_links.py --scope ford
+python3 tools/publish_dashboards.py --scope generac
+python3 tools/verify_links.py --scope generac
 ```
 
-Use `--scope baby` for the Baby pages. The default unscoped command remains a
+Use `--scope baby` for the Baby pages and `--scope generac` for the tracker-owned,
+separately sanitized Generac page. The default unscoped command remains a
 deliberate full-hub maintenance rebuild and is not used by scheduled tracker
 runs. A Ford publication stages only `dashboards/ford.html`; it does not stage
 `index.html` or any Baby/Stroller page.
