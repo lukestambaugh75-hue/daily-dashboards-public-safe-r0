@@ -158,14 +158,17 @@ class VerifyLinksGuardTests(unittest.TestCase):
         original_guard = getattr(verify_links, "assert_canonical_checkout", None)
         original_files = verify_links.HTML_FILES
         original_artifacts = verify_links.PUBLIC_ARTIFACTS
+        original_all_scope = verify_links.PUBLIC_ARTIFACTS_BY_SCOPE["all"]
         verify_links.assert_canonical_checkout = lambda root: events.append(root)
         verify_links.HTML_FILES = []
         verify_links.PUBLIC_ARTIFACTS = []
+        verify_links.PUBLIC_ARTIFACTS_BY_SCOPE["all"] = []
         try:
             verify_links.main()
         finally:
             verify_links.HTML_FILES = original_files
             verify_links.PUBLIC_ARTIFACTS = original_artifacts
+            verify_links.PUBLIC_ARTIFACTS_BY_SCOPE["all"] = original_all_scope
             if original_guard is None:
                 del verify_links.assert_canonical_checkout
             else:
