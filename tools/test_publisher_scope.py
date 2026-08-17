@@ -31,25 +31,14 @@ class PublisherScopeTests(unittest.TestCase):
             [path for path, _html in targets],
         )
 
-    def test_generac_scope_imports_only_the_tracker_owned_public_artifact(self):
-        with mock.patch.object(publish_dashboards, "build_generac", return_value="<html>Generac</html>") as generac, \
-             mock.patch.object(publish_dashboards, "build_ford", side_effect=AssertionError("Ford was read")):
-            targets = publish_dashboards.build_targets("generac")
-        self.assertEqual(
-            [(Path(publish_dashboards.ROOT) / "dashboards" / "generac.html", "<html>Generac</html>")],
-            targets,
-        )
-        generac.assert_called_once_with()
-
     def test_all_scope_remains_explicit_full_hub_mode(self):
         with mock.patch.object(publish_dashboards, "build_ford", return_value=("ford", {})), \
              mock.patch.object(publish_dashboards, "build_washer", return_value=("washer", {})), \
              mock.patch.object(publish_dashboards, "build_baby", return_value=("baby", {})), \
              mock.patch.object(publish_dashboards, "build_baby_stroller", return_value="stroller"), \
-             mock.patch.object(publish_dashboards, "build_generac", return_value="generac"), \
              mock.patch.object(publish_dashboards, "build_index", return_value="index"):
             targets = publish_dashboards.build_targets("all")
-        self.assertEqual(6, len(targets))
+        self.assertEqual(5, len(targets))
         self.assertEqual("index.html", targets[-1][0].name)
 
 

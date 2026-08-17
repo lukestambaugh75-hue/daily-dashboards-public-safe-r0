@@ -13,9 +13,8 @@ class VerifyLinksPolicyTests(unittest.TestCase):
         self.assertIn("www.amazon.com", verify_links.SKIP_LIVE_LINK_HOSTS)
 
     def test_exact_public_artifact_set_covers_all_pages_and_css(self):
-        self.assertEqual(len(verify_links.PUBLIC_ARTIFACTS), 8)
+        self.assertEqual(len(verify_links.PUBLIC_ARTIFACTS), 7)
         self.assertIn("dashboards/baby-stroller.html", verify_links.PUBLIC_ARTIFACTS)
-        self.assertIn("dashboards/generac.html", verify_links.PUBLIC_ARTIFACTS)
         self.assertIn("styles.css", verify_links.PUBLIC_ARTIFACTS)
 
     @mock.patch.object(verify_links.subprocess, "run")
@@ -63,14 +62,6 @@ class VerifyLinksPolicyTests(unittest.TestCase):
              mock.patch.object(verify_links, "check_live_artifact") as live:
             verify_links.main(scope="ford")
         live.assert_called_once_with("dashboards/ford.html")
-
-    def test_generac_scope_checks_only_the_generac_artifact(self):
-        with mock.patch.object(verify_links, "assert_canonical_checkout"), \
-             mock.patch.object(verify_links, "assert_no_forbidden_text"), \
-             mock.patch.object(verify_links, "check_local_link"), \
-             mock.patch.object(verify_links, "check_live_artifact") as live:
-            verify_links.main(scope="generac")
-        live.assert_called_once_with("dashboards/generac.html")
 
 
 if __name__ == "__main__":

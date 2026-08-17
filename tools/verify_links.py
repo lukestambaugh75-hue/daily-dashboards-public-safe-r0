@@ -21,7 +21,6 @@ PUBLIC_ARTIFACTS = [
     "dashboards/baby.html",
     "dashboards/stroller.html",
     "dashboards/baby-stroller.html",
-    "dashboards/generac.html",
     "styles.css",
 ]
 PUBLIC_ARTIFACTS_BY_SCOPE = {
@@ -32,7 +31,6 @@ PUBLIC_ARTIFACTS_BY_SCOPE = {
         "dashboards/stroller.html",
         "dashboards/baby-stroller.html",
     ],
-    "generac": ["dashboards/generac.html"],
 }
 # Backward-compatible name for older tests/importers. The authoritative proof
 # now covers every delivery page plus its shared stylesheet.
@@ -116,18 +114,6 @@ REQUIRED_BY_FILE = {
         "lowest to highest",
         "Message seller first",
         "Safe buy today",
-        "Color index",
-        "Green",
-        "Blue",
-        "Amber",
-        "Red",
-        "information only",
-        "not a recommendation",
-    ],
-    "dashboards/generac.html": [
-        "Generac Houston Tracker",
-        "Current decision anchors",
-        "Reference evidence remains dated",
         "Color index",
         "Green",
         "Blue",
