@@ -335,7 +335,9 @@ def build_washer():
         return None, {}
     m = data.get("summary_metrics") or {}
     hist = read_csv(WASHER / "history.csv", tail=21)
-    verdict = (hist[-1].get("verdict") if hist else "Hold") or "Hold"
+    verdict = (hist[-1].get("verdict") if hist else "Buy") or "Buy"
+    verdict = "BUY CANDIDATE" if str(verdict).strip().upper() in {"BUY", "BUY NOW"} else str(verdict)
+    pair = ((data.get("primary_combo") or {}).get("best_current_pair_price") or {}).get("pair_price")
 
     secs = [section(metrics([
         ("Recommended", m.get("recommended_count", "--")),
@@ -354,12 +356,11 @@ def build_washer():
         ))
 
     gate = (
-        '        <article class="panel chart">\n          <h2>Decision gate</h2>\n'
+        '        <article class="panel chart">\n          <h2>Decision</h2>\n'
         '          <div class="callout">\n'
-        '            <strong>Hold until the delivered total is proven.</strong>\n'
-        '            <p class="meta">Public item-page pricing is not enough. Compare '
-        'delivered checkout terms, taxes, fees, haul-away, and install before treating '
-        'any pair as a buy.</p>\n          </div>\n'
+        '            <strong>BUY CANDIDATE at the current posted pair price.</strong>\n'
+        '            <p class="meta">Home Depot and GE Appliances post the exact pair at the current public price. '
+        'Delivery, services, taxes, and the final delivered total remain unverified; checkout is optional follow-up.</p>\n          </div>\n'
     )
     rec = data.get("direct_recommendation") or {}
     if rec.get("summary"):
@@ -380,10 +381,10 @@ def build_washer():
         "Public-safe decision view. Detailed checkout evidence, cart state, and local "
         "source ledgers stay private.",
         "".join(secs),
-        "Sanitized summary only. Confirm delivered total, taxes, fees, haul-away, and "
-        "install before buying.",
+        "Sanitized summary only. Posted prices can change; delivery, taxes, fees, haul-away, and "
+        "install remain optional checkout details.",
     )
-    return html, {"price": money(m.get("best_supported_savings")), "verdict": verdict}
+    return html, {"price": money(m.get("best_supported_savings")), "pair_price": money(pair), "verdict": verdict}
 
 
 # ------------------------------------------------------------------- BABY
@@ -692,7 +693,7 @@ def build_baby_stroller(baby_html):
 def build_index(ford, washer, baby, stroller_price="$600"):
     today = datetime.now().strftime("%B %-d, %Y")
     ford_price = ford.get("price", "--")
-    washer_verdict = washer.get("verdict", "Hold")
+    washer_verdict = washer.get("verdict", "BUY CANDIDATE")
 
     return f"""<!doctype html>
 <html lang="en">
@@ -741,15 +742,15 @@ def build_index(ford, washer, baby, stroller_price="$600"):
           <div>
             <div class="pick-top">
               <span class="pick-rank">2</span>
-              <span class="pick-label">Washer checkout gate</span>
+              <span class="pick-label">Washer posted-price candidate</span>
             </div>
             <strong class="pick-value">{washer_verdict}</strong>
-            <h2>Hold until delivered total is proven</h2>
-            <p class="meta">Best supported saving {washer.get('price', '--')}. Public item-page pricing is not enough; compare delivered checkout terms before treating the pair as a buy.</p>
+            <h2>Buy candidate at current posted pair price</h2>
+            <p class="meta">Exact pair posted at {washer.get('pair_price', '--')}. Best supported saving {washer.get('price', '--')}; delivery, services, taxes, and final total remain unverified.</p>
             <div class="sub-links">
               <a href="dashboards/washer.html">Savings trend</a>
-              <a href="dashboards/washer.html">Decision gate</a>
-              <a href="dashboards/washer.html">Checkout caution</a>
+              <a href="dashboards/washer.html">Decision</a>
+              <a href="dashboards/washer.html">Optional checkout</a>
             </div>
           </div>
           <a class="button primary" href="dashboards/washer.html">Open public-safe view</a>
@@ -796,7 +797,7 @@ def build_index(ford, washer, baby, stroller_price="$600"):
             <a class="button" href="dashboards/ford.html">Open public-safe view</a>
           </article>
           <article class="card">
-            <span class="status hold">{washer_verdict}</span>
+            <span class="status live">{washer_verdict}</span>
             <div>
               <h3>Washer Deal Tracker</h3>
               <p class="meta">Best supported saving {washer.get('price', '--')}. Detailed checkout evidence stays private.</p>
