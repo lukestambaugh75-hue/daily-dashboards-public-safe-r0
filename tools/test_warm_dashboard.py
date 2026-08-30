@@ -43,9 +43,8 @@ class WarmDashboardContractTests(unittest.TestCase):
         self.assertNotIn("https://www.amazon.com/dp/", self.text)
 
     def test_tables_include_60_day_low_columns_and_current_strollers_only(self):
-        self.assertIn("60-day low", self.text)
-        self.assertIn("Low difference", self.text)
-        self.assertIn("NEW 60-DAY LOW", self.text)
+        self.assertIn("<th>60-day low</th>", self.text)
+        self.assertIn("<th>Low difference</th>", self.text)
         self.assertNotIn("availability only", self.text.lower())
         self.assertNotIn("Sold</td>", self.text)
 

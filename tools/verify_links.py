@@ -69,7 +69,7 @@ REQUIRED_BY_FILE = {
         "Top 3 Quality and Price",
         "Open public-safe view",
         "Raptor public-safe lead",
-        "Washer checkout gate",
+        "Optional checkout",
         "Nuna stroller price board",
         "Nuna Stroller Tracker",
         "Color index",

@@ -58,7 +58,7 @@ class AudienceSegregationTests(unittest.TestCase):
         self.assertIn('href="dashboards/washer.html"', text)
         self.assertIn('href="dashboards/baby-stroller.html"', text)
         self.assertIn("Raptor public-safe lead", text)
-        self.assertIn("Washer checkout gate", text)
+        self.assertIn("Optional checkout", text)
         self.assertIn("Nuna stroller price board", text)
         self.assertNotIn("Outdoor keg value", text)
         self.assertNotIn("PS5 and TV stack", text)
